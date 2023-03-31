@@ -4,5 +4,6 @@ from main.views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index)
+    path('', index),
+    # path('stations/<int:id>/', )
 ]
