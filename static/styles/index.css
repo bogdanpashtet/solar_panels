@@ -30,3 +30,9 @@ ul {
     font-family: helvetica, arial, serif;
     list-style-type: none;
 }
+
+.albedo {
+    width: 400px;
+    height: 200px;
+    display: none;
+}
