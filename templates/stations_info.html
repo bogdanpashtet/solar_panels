@@ -13,24 +13,31 @@
 
 {% block content %}
     <div class="parent">
-        <div class="station_name"></div>
+        <div class="info_container">
+            <div class="station_name"></div>
+            <div class="station_region"></div>
+            <div class="station_coordinates">
+                <div class="station_latitude"></div>
+                <div class="station_longitude"></div>
+            </div>
+        </div>
 
         <h1>Альбедо</h1>
         <div class="chartBox">
             <canvas id="albedo"></canvas>
         </div>
 
-        <h1>Диффузная слонечная радиация</h1>
+        <h1>Диффузная солнечная радиация</h1>
         <div class="chartBox">
             <canvas id="diffuse"></canvas>
         </div>
 
-        <h1>Суммарная слонечная радиация</h1>
+        <h1>Суммарная солнечная радиация</h1>
         <div class="chartBox">
             <canvas id="total"></canvas>
         </div>
 
-        <h1>Прямая слонечная радиация</h1>
+        <h1>Прямая солнечная радиация</h1>
         <div class="chartBox">
             <canvas id="direct"></canvas>
         </div>

@@ -3,7 +3,7 @@ from json_api.views import *
 
 urlpatterns = [
     path('stations', stations_info_get),
-    path('station/<int:id>', station_info_get),
+    path('station/<int:id>/', station_info_get),
 
     path('station/<int:id>/albedo', stations_albedo_get),
 

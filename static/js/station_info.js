@@ -7,9 +7,16 @@ let url = window.location.origin + API_V1_PREFIX + window.location.pathname;
 
 fetch(url)
     .then(response => response.json())
-    .then(data =>
-        d3.select('.station_name')
-            .text(data[0].station_name)
+    .then(data => {
+            d3.select('.station_name')
+                .text(data[0].station_name);
+            d3.select('.station_region')
+                .text(data[0].region);
+            d3.select('.station_latitude')
+                .text(data[0].latitude);
+            d3.select('.station_longitude')
+                .text(data[0].longitude);
+        }
     );
 
 // получаем альбедо
