@@ -1,3 +1,5 @@
+const API_V1_PREFIX = '/api/v1'
+
 const svg = d3.select('svg')
     .on("dblclick", function () {
         svg.transition().duration(700).call(zoom.transform, d3.zoomIdentity)
@@ -40,52 +42,62 @@ d3.json('static/json/ussr.json')
             .on("dblclick.zoom", null)
             .attr('d', d => pathGenerator(d));
 
+        let url = window.location.origin + API_V1_PREFIX + '/stations';
+
         // Добавляем точки на карту из файла .csv
-        d3.csv('static/csv/stations.csv').then(data => {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
 
-            data.forEach(function (d) {
-                d.latitude = +d.latitude;
-                d.longitude = +d.longitude;
-            });
+                    data.forEach(function (d) {
+                        d.latitude = +d.latitude;
+                        d.longitude = +d.longitude;
+                        d.id = d.id.toString();
+                    });
 
-            g.selectAll("circle")
-                .data(data)
-                .enter()
-                .append("circle")
-                .attr("id", function (d) {
-                    return d.id;
-                })
-                .attr("cx", function (d) {
-                    return projection([d.longitude, d.latitude])[0];
-                })
-                .attr("cy", function (d) {
-                    return projection([d.longitude, d.latitude])[1];
-                })
-                .attr("r", 5)
-                .style("fill", "red")
-                .style("stroke", "black")
-                .style("stroke-width", 1)
-                .on("mouseover", function () {
-                    let size = d3.select(this).attr('r')
-
-                    d3.select(this)
-                        .style("fill", "lightgreen")
-                        .attr("r", size * 1.3);
-                })
-                .on("mouseout", function () {
-                    let size = d3.select(this).attr('r')
-
-                    d3.select(this)
+                    g.selectAll("circle")
+                        .data(data)
+                        .enter()
+                        .append("circle")
+                        .attr("id", d => {
+                            return d.id;
+                        })
+                        .attr("cx", d => {
+                            return projection([d.longitude, d.latitude])[0];
+                        })
+                        .attr("cy", d => {
+                            return projection([d.longitude, d.latitude])[1];
+                        })
+                        // .append("a")
+                        // .attr("href", function (d) {
+                        //     return "http://example.com/point/" + d.id;
+                        // })
+                        .attr("r", 5)
                         .style("fill", "red")
-                        .attr("r", size * 10/13);
-                })
-                .append("title")
-                .text(function (d) {
-                    return d.station_name + ", " + d.region;
-                });
+                        .style("stroke", "black")
+                        .style("stroke-width", 1)
+                        .on("mouseover", function () {
+                            let size = d3.select(this).attr('r')
 
-            createList(data);
-        });
+                            d3.select(this)
+                                .style("fill", "lightgreen")
+                                .attr("r", size * 1.3);
+                        })
+                        .on("mouseout", function () {
+                            let size = d3.select(this).attr('r')
+
+                            d3.select(this)
+                                .style("fill", "red")
+                                .attr("r", size * 10 / 13);
+                        })
+                        .append("title")
+                        .text(function (d) {
+                            return d.station_name + ", " + d.region;
+                        });
+
+                    createList(data);
+                }
+            );
     });
 
 function createList(data) {
@@ -133,6 +145,6 @@ function createList(data) {
 
             circle
                 .style("fill", "red")
-                .attr("r", size * 10/13);
+                .attr("r", size * 10 / 13);
         });
 }
