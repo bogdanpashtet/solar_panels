@@ -13,25 +13,6 @@ class StationInfo(ListView):
     template_name = 'stations_info.html'
     extra_context = {'title': '?????????'}
 
-    # def get_context_data(self, **kwargs):
-        # context = super().get_context_data(**kwargs)
-        # context['station'] = Stations.objects.get(id=self.kwargs['id'])
-        # context['albedo'] = model_to_dict(Albedo.objects.filter(station_id=self.kwargs['id']).first())
-        #
-        # context['diffuse_daily'] = DiffuseDailySolarRadiation.objects.get(station_id=self.kwargs['id'])
-        # context['total_daily'] = TotalDailySolarRadiation.objects.get(station_id=self.kwargs['id'])
-        # context['direct_daily'] = DirectDailySolarRadiation.objects.get(station_id=self.kwargs['id'])
-        #
-        # context['diffuse_monthly'] = DiffuseMonthlySolarRadiation.objects.get(station_id=self.kwargs['id'])
-        # context['total_monthly'] = TotalMonthlySolarRadiation.objects.get(station_id=self.kwargs['id'])
-        # context['direct_monthly'] = DirectMonthlySolarRadiation.objects.get(station_id=self.kwargs['id'])
-
-        # context['diffuse_hourly'] = DiffuseHourlySolarRadiation.objects.get(station_id=self.kwargs['id'])
-        # context['total_hourly'] = TotalHourlySolarRadiation.objects.get(station_id=self.kwargs['id'])
-        # context['direct_hourly'] = DirectHourlySolarRadiation.objects.get(station_id=self.kwargs['id'])
-
-        # return context
-
 
 def station_info_get(request, **kwargs):
     data = Stations.objects.filter(id=kwargs['id']).values()
@@ -40,6 +21,11 @@ def station_info_get(request, **kwargs):
 
 def stations_info_get(request):
     data = list(Stations.objects.values())
+    return JsonResponse(data, safe=False)
+
+
+def stations_albedo_get(request, **kwargs):
+    data = list(Albedo.objects.filter(station_id=kwargs['id']).values())
     return JsonResponse(data, safe=False)
 
 

@@ -1,68 +1,248 @@
-const url = window.location.origin + '/api/v1' + window.location.pathname;
+const API_V1_PREFIX = '/api/v1'
+const MONTH = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+
+// получаем информацию о станции
+let url = window.location.origin + API_V1_PREFIX + window.location.pathname;
 
 fetch(url)
-  .then(response => response.json())
-  .then(data =>
-      d3.select('.station_name')
-        .text(data[0].station_name)
-  );
+    .then(response => response.json())
+    .then(data =>
+        d3.select('.station_name')
+            .text(data[0].station_name)
+    );
 
-// const container = d3.select('.albedo');
-//
-// // Получаем значения из элементов списка li, кроме первого
-// const data = container.selectAll('li:not(:first-child)')
-//   .nodes()
-//   .map(node => +node.textContent);
-//
-// // Создаем шкалу для оси x
-// const xScale = d3.scaleBand()
-//   .domain(d3.range(data.length))
-//   .range([0, container.node().clientWidth])
-//   .paddingInner(0.05);
-//
-// // Создаем шкалу для оси y
-// const yScale = d3.scaleLinear()
-//   .domain([0, d3.max(data)])
-//   .range([container.node().clientHeight, 0]);
-//
-// // Создаем контейнер для графика
-// const svg = container.append('svg')
-//   .attr('width', 300) // Изменяем размер области отрисовки
-//   .attr('height', 200);
-//
-// // Добавляем ось x
-// const xAxis = d3.axisBottom(xScale)
-//   .tickSizeInner(-container.node().clientHeight) // Размер внутренних меток оси
-//   .tickSizeOuter(0); // Размер внешних меток оси
-//
-// svg.append('g')
-//   .attr('transform', `translate(0, ${container.node().clientHeight})`) // Смещаем ось вниз
-//   .call(xAxis);
-//
-// // Добавляем ось y
-// const yAxis = d3.axisLeft(yScale)
-//   .tickSizeInner(-container.node().clientWidth) // Размер внутренних меток оси
-//   .tickSizeOuter(0); // Размер внешних меток оси
-//
-// svg.append('g')
-//   .call(yAxis);
-//
-// // Добавляем сетку
-// const grid = d3.axisLeft(yScale)
-//   .tickSize(-container.node().clientWidth) // Размер линий сетки
-//   .tickFormat('');
-//
-// svg.append('g')
-//   .call(grid);
-//
-// // Добавляем линию графика
-// const line = d3.line()
-//   .x((d, i) => xScale(i))
-//   .y(d => yScale(d));
-//
-// svg.append('path')
-//   .datum(data)
-//   .attr('fill', 'none')
-//   .attr('stroke', 'steelblue')
-//   .attr('stroke-width', 2)
-//   .attr('d', line);
+// получаем альбедо
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/albedo';
+
+let albedo_values
+
+fetch(url)
+    .then(response => response.json())
+    .then(data => {
+            const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
+            albedo_values = months.map(key => +data[0][key]);
+
+            const dataSet = {
+                labels: MONTH,
+                datasets: [
+                    {
+                        label: 'Альбедо',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                        data: albedo_values,
+                    }
+                ]
+            };
+
+            const config = {
+                type: 'line',
+                data: dataSet,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    aspectRatio: 1.5, // ширина = высота * 1.5
+                }
+            };
+
+            const albedo = new Chart(
+                document.getElementById('albedo'),
+                config
+            )
+        }
+    );
+
+// получаем диффузную солнечную радиацию по месяцам, дням и !!!!!часам
+
+// месячная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/diffuse-monthly';
+
+const request = new XMLHttpRequest();
+request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
+request.send();
+
+let diffuse_month = [];
+
+if (request.status === 200) {
+    const data = JSON.parse(request.responseText);
+    const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
+    diffuse_month = months.map(key => +data[0][key]);
+}
+
+// суточная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/diffuse-daily';
+request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
+request.send();
+
+let diffuse_daily = [];
+
+if (request.status === 200) {
+    const data = JSON.parse(request.responseText);
+    const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
+    diffuse_daily = months.map(key => +data[0][key]);
+}
+
+let dataSet = {
+    labels: MONTH,
+    datasets: [
+        {
+            label: 'Месячная',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            data: diffuse_month,
+        },
+        {
+            label: 'Суточная',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            data: diffuse_daily,
+        }
+    ]
+};
+
+let config = {
+    type: 'line',
+    data: dataSet,
+    options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        aspectRatio: 1.5, // ширина = высота * 1.5
+    }
+};
+
+let diffuse = new Chart(
+    document.getElementById('diffuse'),
+    config
+)
+
+
+// получаем суммарную солнечную радиацию по месяцам, дням и !!!!!часам
+
+// месячная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/total-monthly';
+
+request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
+request.send();
+
+let total_month = [];
+
+if (request.status === 200) {
+    const data = JSON.parse(request.responseText);
+    const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
+    total_month = months.map(key => +data[0][key]);
+}
+
+// суточная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/total-daily';
+request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
+request.send();
+
+let total_daily = [];
+
+if (request.status === 200) {
+    const data = JSON.parse(request.responseText);
+    const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
+    total_daily = months.map(key => +data[0][key]);
+}
+
+dataSet = {
+    labels: MONTH,
+    datasets: [
+        {
+            label: 'Месячная',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            data: total_month,
+        },
+        {
+            label: 'Суточная',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            data: total_daily,
+        }
+    ]
+};
+
+config = {
+    type: 'line',
+    data: dataSet,
+    options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        aspectRatio: 1.5, // ширина = высота * 1.5
+    }
+};
+
+const total = new Chart(
+    document.getElementById('total'),
+    config
+)
+
+
+// ---------------------- ПРЯМАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
+
+// Месячная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/direct-monthly';
+
+request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
+request.send();
+
+let direct_month = [];
+
+if (request.status === 200) {
+    const data = JSON.parse(request.responseText);
+    const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
+    direct_month = months.map(key => +data[0][key]);
+}
+
+// Суточная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/direct-daily';
+request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
+request.send();
+
+let direct_daily = [];
+
+if (request.status === 200) {
+    const data = JSON.parse(request.responseText);
+    const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
+    direct_daily = months.map(key => +data[0][key]);
+}
+
+dataSet = {
+    labels: MONTH,
+    datasets: [
+        {
+            label: 'Месячная',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            data: direct_month,
+        },
+        {
+            label: 'Суточная',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            data: direct_daily,
+        }
+    ]
+};
+
+config = {
+    type: 'line',
+    data: dataSet,
+    options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        aspectRatio: 1.5, // ширина = высота * 1.5
+    }
+};
+
+const direct = new Chart(
+    document.getElementById('direct'),
+    config
+)

@@ -10,6 +10,7 @@ urlpatterns = [
     # API methods
     path('api/v1/stations', stations_info_get),
     path('api/v1/station/<int:id>', station_info_get),
+    path('api/v1/station/<int:id>/albedo', stations_albedo_get),
 
     path('api/v1/station/<int:id>/diffuse-daily', stations_diffuse_daily_get),
     path('api/v1/station/<int:id>/diffuse-monthly', stations_diffuse_monthly_get),

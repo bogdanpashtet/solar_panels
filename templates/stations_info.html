@@ -7,11 +7,32 @@
 
 {% block scripts %}
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="https://d3js.org/topojson.v2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <script type="text/javascript" src={% static "js/station_info.js" %}></script>
 {% endblock %}
 
 {% block content %}
-    <div class="station_name"></div>
+    <div class="parent">
+        <div class="station_name"></div>
 
+        <h1>Альбедо</h1>
+        <div class="chartBox">
+            <canvas id="albedo"></canvas>
+        </div>
+
+        <h1>Диффузная слонечная радиация</h1>
+        <div class="chartBox">
+            <canvas id="diffuse"></canvas>
+        </div>
+
+        <h1>Суммарная слонечная радиация</h1>
+        <div class="chartBox">
+            <canvas id="total"></canvas>
+        </div>
+
+        <h1>Прямая слонечная радиация</h1>
+        <div class="chartBox">
+            <canvas id="direct"></canvas>
+        </div>
+    </div>
 {% endblock %}

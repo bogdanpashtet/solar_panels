@@ -1,6 +1,7 @@
 body {
     margin: 0;
     padding: 0;
+    font-family: helvetica, arial, serif;
 }
 
 .map-container {
@@ -31,8 +32,12 @@ ul {
     list-style-type: none;
 }
 
-.albedo {
-    width: 400px;
-    height: 200px;
-    display: none;
+.parent {
+    text-align: center;
+}
+
+.chartBox {
+    display: inline-block;
+    height: 50vh;
+    width: 70vw;
 }
