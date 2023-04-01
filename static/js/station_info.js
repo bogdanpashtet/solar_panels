@@ -4,6 +4,7 @@ const MONTH = ['Январь', 'Февраль', 'Март', 'Апрель', 'М
 // получаем информацию о станции
 let url = window.location.origin + API_V1_PREFIX + window.location.pathname;
 
+
 fetch(url)
     .then(response => response.json())
     .then(data =>
@@ -12,7 +13,7 @@ fetch(url)
     );
 
 // получаем альбедо
-url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/albedo';
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + 'albedo';
 
 let albedo_values
 
@@ -52,10 +53,10 @@ fetch(url)
         }
     );
 
-// получаем диффузную солнечную радиацию по месяцам, дням и !!!!!часам
+// ---------------------- ДИФФУЗНАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
 
-// месячная
-url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/diffuse-monthly';
+// Месячная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + 'diffuse-monthly';
 
 const request = new XMLHttpRequest();
 request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
@@ -69,8 +70,8 @@ if (request.status === 200) {
     diffuse_month = months.map(key => +data[0][key]);
 }
 
-// суточная
-url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/diffuse-daily';
+// Суточная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + 'diffuse-daily';
 request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
 request.send();
 
@@ -118,10 +119,10 @@ let diffuse = new Chart(
 )
 
 
-// получаем суммарную солнечную радиацию по месяцам, дням и !!!!!часам
+// ---------------------- СУММАРНАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
 
-// месячная
-url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/total-monthly';
+// Месячная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + 'total-monthly';
 
 request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
 request.send();
@@ -134,8 +135,8 @@ if (request.status === 200) {
     total_month = months.map(key => +data[0][key]);
 }
 
-// суточная
-url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/total-daily';
+// Суточная
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + 'total-daily';
 request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
 request.send();
 
@@ -186,7 +187,7 @@ const total = new Chart(
 // ---------------------- ПРЯМАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
 
 // Месячная
-url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/direct-monthly';
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + 'direct-monthly';
 
 request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
 request.send();
@@ -200,7 +201,7 @@ if (request.status === 200) {
 }
 
 // Суточная
-url = window.location.origin + API_V1_PREFIX + window.location.pathname + '/direct-daily';
+url = window.location.origin + API_V1_PREFIX + window.location.pathname + 'direct-daily';
 request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
 request.send();
 
