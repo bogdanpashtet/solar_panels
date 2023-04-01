@@ -1,5 +1,11 @@
-const API_V1_PREFIX = '/api/v1'
-const MONTH = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+const API_V1_PREFIX = '/api/v1';
+const MONTH = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+const COLOR_BACKGROUND_RED = 'rgba(255, 99, 132, 0.2)';
+const COLOR_BORDER_RED = 'rgba(255, 99, 132, 1)';
+
+const COLOR_BACKGROUND_BLUE = 'rgba(54, 162, 235, 0.2)';
+const COLOR_BORDER_BLUE = 'rgba(54, 162, 235, 1)';
 
 const request = new XMLHttpRequest();
 
@@ -27,142 +33,50 @@ let dataSet = {
     datasets: [
         {
             label: 'Альбедо',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: COLOR_BACKGROUND_RED,
+            borderColor: COLOR_BORDER_RED,
             borderWidth: 1,
-            data: createDataset('albedo'),
+            data: getDatasetByURL('albedo'),
         }
     ]
-};
-
-let config = {
-    type: 'line',
-    data: dataSet,
-    options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        aspectRatio: 1.5, // ширина = высота * 1.5
-    }
 };
 
 new Chart(
     document.getElementById('albedo'),
-    config
+    createConfig(dataSet)
 )
 
 // ---------------------- ДИФФУЗНАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
 
-dataSet = {
-    labels: MONTH,
-    datasets: [
-        {
-            label: 'Месячная',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-            data: createDataset('diffuse-monthly'),
-        },
-        {
-            label: 'Суточная',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1,
-            data: createDataset('diffuse-daily'),
-        }
-    ]
-};
-
-config = {
-    type: 'line',
-    data: dataSet,
-    options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        aspectRatio: 1.5, // ширина = высота * 1.5
-    }
-};
+dataSet = createSolarRadiationDataset('diffuse-monthly','diffuse-daily');
 
 new Chart(
     document.getElementById('diffuse'),
-    config
-)
+    createConfig(dataSet)
+);
 
 
 // ---------------------- СУММАРНАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
 
-dataSet = {
-    labels: MONTH,
-    datasets: [
-        {
-            label: 'Месячная',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-            data: createDataset('total-monthly'),
-        },
-        {
-            label: 'Суточная',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1,
-            data: createDataset('total-daily'),
-        }
-    ]
-};
-
-config = {
-    type: 'line',
-    data: dataSet,
-    options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        aspectRatio: 1.5, // ширина = высота * 1.5
-    }
-};
+dataSet = createSolarRadiationDataset('total-monthly','total-daily');
 
 new Chart(
     document.getElementById('total'),
-    config
-)
+    createConfig(dataSet)
+);
 
 // ---------------------- ПРЯМАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
 
-dataSet = {
-    labels: MONTH,
-    datasets: [
-        {
-            label: 'Месячная',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-            data: createDataset('direct-monthly'),
-        },
-        {
-            label: 'Суточная',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1,
-            data: createDataset('direct-daily'),
-        }
-    ]
-};
-
-config = {
-    type: 'line',
-    data: dataSet,
-    options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        aspectRatio: 1.5, // ширина = высота * 1.5
-    }
-};
+dataSet = createSolarRadiationDataset('direct-monthly','direct-daily');
 
 new Chart(
     document.getElementById('direct'),
-    config
-)
+    createConfig(dataSet)
+);
 
-function createDataset(path) {
+// ---------------------- ФУНКЦИИ ----------------------
+
+function getDatasetByURL(path) {
     url = window.location.origin + API_V1_PREFIX + window.location.pathname + path;
 
     request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
@@ -173,4 +87,38 @@ function createDataset(path) {
         const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
         return months.map(key => +data[0][key]);
     }
+}
+
+function createConfig(dataSet) {
+    return {
+        type: 'line',
+        data: dataSet,
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            aspectRatio: 1.5, // ширина = высота * 1.5
+        }
+    };
+}
+
+function createSolarRadiationDataset(path1, path2) {
+    return {
+    labels: MONTH,
+    datasets: [
+        {
+            label: 'Месячная',
+            backgroundColor: COLOR_BACKGROUND_RED,
+            borderColor: COLOR_BORDER_RED,
+            borderWidth: 1,
+            data: getDatasetByURL(path1),
+        },
+        {
+            label: 'Суточная',
+            backgroundColor: COLOR_BACKGROUND_BLUE,
+            borderColor: COLOR_BORDER_BLUE,
+            borderWidth: 1,
+            data: getDatasetByURL(path2),
+        }
+    ]
+};
 }
