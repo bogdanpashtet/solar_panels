@@ -42,9 +42,12 @@ d3.json('static/json/ussr.json')
             .on("dblclick.zoom", null)
             .attr('d', d => pathGenerator(d));
 
-        let url = window.location.origin + API_V1_PREFIX + '/stations';
+        createPoints();
+    });
 
-        // Добавляем точки на карту из файла .csv
+function createPoints() {
+    let url = window.location.origin + API_V1_PREFIX + '/stations';
+
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -59,6 +62,7 @@ d3.json('static/json/ussr.json')
                         .data(data)
                         .enter()
                         .append("circle")
+                        .call(zoom)
                         .attr("id", d => {
                             return d.id;
                         })
@@ -98,7 +102,7 @@ d3.json('static/json/ussr.json')
                     createList(data);
                 }
             );
-    });
+}
 
 function createList(data) {
     const list = d3.select("#list")

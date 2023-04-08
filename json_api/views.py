@@ -29,13 +29,14 @@ def stations_diffuse_monthly_get(request, **kwargs):
 
 
 def stations_diffuse_hourly_get(request, **kwargs):
-    data = list(DiffuseHourlySolarRadiation.objects.filter(station_id=kwargs['id']).values())
+    station_id = (kwargs['id'] - 1) * 24 + 1
+    data = list(DiffuseHourlySolarRadiation.objects.filter(station_id_id__gte=station_id, station_id_id__lte=station_id + 23).values())
     return JsonResponse(data, safe=False)
 
 
 # total solar radiation
 def stations_total_daily_get(request, **kwargs):
-    data = list(TotalDailySolarRadiation.objects.filter(station_id=kwargs['id']).values())
+    data = list(TotalDailySolarRadiation.objects.filter(station_id=kwargs["id"]).values())
     return JsonResponse(data, safe=False)
 
 
@@ -45,7 +46,11 @@ def stations_total_monthly_get(request, **kwargs):
 
 
 def stations_total_hourly_get(request, **kwargs):
-    data = list(TotalHourlySolarRadiation.objects.filter(station_id=kwargs['id']).values())
+    # это заглушка, потому что данные в базе лежат криво, а лазить и менять id в ~12000 строках я не хочу (датасеты формаировал, к сожалению, не я)
+    # поэтому делаем выборку с 3985 индекса и по каджому часу. аналогично и в других "часовых" данных, только там индексация начинается с единицы
+    # в целом добавление в базу новых данных не предполагается, так как база не менялась с 2004, так что пойдет и так
+    station_id = (kwargs['id'] - 1) * 24 + 3985
+    data = list(TotalHourlySolarRadiation.objects.filter(station_id_id__gte=station_id, station_id_id__lte=station_id + 23).values())
     return JsonResponse(data, safe=False)
 
 
@@ -61,5 +66,6 @@ def stations_direct_monthly_get(request, **kwargs):
 
 
 def stations_direct_hourly_get(request, **kwargs):
-    data = list(DirectHourlySolarRadiation.objects.filter(station_id=kwargs['id']).values())
+    station_id = (kwargs['id'] - 1) * 24 + 1
+    data = list(DirectHourlySolarRadiation.objects.filter(station_id_id__gte=station_id, station_id_id__lte=station_id + 23).values())
     return JsonResponse(data, safe=False)

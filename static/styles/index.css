@@ -42,7 +42,7 @@ ul {
     width: 70vw;
 }
 
-.info_container{
+.info_container {
     display: inline-block;
     margin: 1em 3em 0 3em;
     border: 3px solid black;
@@ -50,9 +50,9 @@ ul {
 }
 
 .station_coordinates {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     padding: 1em;
 }
 
@@ -67,4 +67,8 @@ ul {
 .station_name {
     padding-top: 1em;
     font-size: 1.4em;
+}
+
+table {
+    display: inline-block;
 }

@@ -43,9 +43,6 @@ class BaseHour(BaseMonth):
 
     hour_num = models.PositiveIntegerField('hour_num', validators=[MinValueValidator(1)])
 
-    def __str__(self):
-        return f"""{self.station_id} {self.hour_num} час """
-
 
 # Альбедо
 class Albedo(BaseMonth):
