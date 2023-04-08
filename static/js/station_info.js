@@ -1,11 +1,17 @@
 const API_V1_PREFIX = '/api/v1';
 const MONTH = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+const HOURS = ['0-1', '1-2', '2-3', '3-4', '4-5', '5-6', '6-7', '7-8', '8-9', '9-10', '10-11', '11-12', '12-13', '13-14', '14-15', '15-16', '16-17', '17-18', '18-19', '19-20', '20-21', '21-22', '22-23', '23-24']
+
+const MONTH_INDEX = 15 // если нужна информация по месяцам обозначим за 15
 
 const COLOR_BACKGROUND_RED = 'rgba(255, 99, 132, 0.2)';
 const COLOR_BORDER_RED = 'rgba(255, 99, 132, 1)';
 
 const COLOR_BACKGROUND_BLUE = 'rgba(54, 162, 235, 0.2)';
 const COLOR_BORDER_BLUE = 'rgba(54, 162, 235, 1)';
+
+const COLOR_BACKGROUND_YELLOW = 'rgba(255, 206, 86, 0.2)';
+const COLOR_BORDER_YELLOW = 'rgba(255, 206, 86, 1)';
 
 const request = new XMLHttpRequest();
 
@@ -26,10 +32,10 @@ fetch(url)
         }
     );
 
+// ---------------------- ЗАПОЛНЯЕМ ТАБЛИЦЫ ----------------------
 createTable('diffuse-hourly');
 createTable('total-hourly');
 createTable('direct-hourly');
-
 
 // ---------------------- АЛЬБЕДО ----------------------
 
@@ -41,7 +47,7 @@ let dataSet = {
             backgroundColor: COLOR_BACKGROUND_RED,
             borderColor: COLOR_BORDER_RED,
             borderWidth: 1,
-            data: getDatasetByURL('albedo'),
+            data: getDatasetMonthByURL('albedo', MONTH_INDEX),
         }
     ]
 };
@@ -51,36 +57,33 @@ new Chart(
     createConfig(dataSet)
 )
 
-// ---------------------- ДИФФУЗНАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
-
-dataSet = createSolarRadiationDataset('diffuse-monthly', 'diffuse-daily');
+// ---------------------- МЕСЯЧНЫЕ СУММЫ СОЛНЕЧНОЙ РАДИАЦИИ ----------------------
+dataSet = createSolarRadiationDataset(MONTH, MONTH_INDEX, 'diffuse-monthly', 'direct-monthly', 'total-monthly');
 
 new Chart(
-    document.getElementById('diffuse'),
+    document.getElementById('monthly'),
     createConfig(dataSet)
 );
 
-// ---------------------- СУММАРНАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
-
-dataSet = createSolarRadiationDataset('total-monthly', 'total-daily');
+// ---------------------- СРЕДЕМЕСЯЧНЫЙ ПРИХОД ДЛЯ ИЮНЯ ----------------------
+dataSet = createSolarRadiationDataset(HOURS, 5, 'diffuse-hourly', 'direct-hourly', 'total-hourly');
 
 new Chart(
-    document.getElementById('total'),
+    document.getElementById('june'),
     createConfig(dataSet)
 );
 
-// ---------------------- ПРЯМАЯ СЛОНЕЧНАЯ РАДИАЦИЯ ----------------------
-
-dataSet = createSolarRadiationDataset('direct-monthly', 'direct-daily');
+// ---------------------- СРЕДЕМЕСЯЧНЫЙ ПРИХОД ДЛЯ ЯНВАРЯ ----------------------
+dataSet = createSolarRadiationDataset(HOURS, 0, 'diffuse-hourly', 'direct-hourly', 'total-hourly');
 
 new Chart(
-    document.getElementById('direct'),
+    document.getElementById('january'),
     createConfig(dataSet)
 );
 
 // ---------------------- ФУНКЦИИ ----------------------
 
-function getDatasetByURL(path) {
+function getDatasetMonthByURL(path, index) {
     url = window.location.origin + API_V1_PREFIX + window.location.pathname + path;
 
     request.open('GET', url, false);  // третий аргумент - false для синхронного запроса
@@ -88,8 +91,16 @@ function getDatasetByURL(path) {
 
     if (request.status === 200) {
         const data = JSON.parse(request.responseText);
-        const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
-        return months.map(key => +data[0][key]);
+        if (index === MONTH_INDEX) {
+            const months = Object.keys(data[0]).filter(key => key.startsWith("month"));
+            return months.map(key => +data[0][key]);
+        } else {
+            let arr = [];
+            for (let i = 0; i < 24; i++) {
+                arr.push(getDataMonth(i, index, data));
+            }
+            return arr
+        }
     }
 }
 
@@ -105,23 +116,30 @@ function createConfig(dataSet) {
     };
 }
 
-function createSolarRadiationDataset(path1, path2) {
+function createSolarRadiationDataset(label, index, path1, path2, path3) {
     return {
-        labels: MONTH,
+        labels: label,
         datasets: [
             {
-                label: 'Месячная',
+                label: 'Диффузная',
                 backgroundColor: COLOR_BACKGROUND_RED,
                 borderColor: COLOR_BORDER_RED,
                 borderWidth: 1,
-                data: getDatasetByURL(path1),
+                data: getDatasetMonthByURL(path1, index),
             },
             {
-                label: 'Суточная',
+                label: 'Прямая',
                 backgroundColor: COLOR_BACKGROUND_BLUE,
                 borderColor: COLOR_BORDER_BLUE,
                 borderWidth: 1,
-                data: getDatasetByURL(path2),
+                data: getDatasetMonthByURL(path2, index),
+            },
+            {
+                label: 'Суммарная',
+                backgroundColor: COLOR_BACKGROUND_YELLOW,
+                borderColor: COLOR_BORDER_YELLOW,
+                borderWidth: 1,
+                data: getDatasetMonthByURL(path3, index),
             }
         ]
     };
