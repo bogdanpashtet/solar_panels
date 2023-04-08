@@ -127,41 +127,59 @@ function createSolarRadiationDataset(path1, path2) {
     };
 }
 
-function addCell(cellData, row) {
-    let cell = document.createElement('td');
-    cell.textContent = cellData;
-    row.appendChild(cell);
-}
-
 function createTable(tableName) {
     url = window.location.origin + API_V1_PREFIX + window.location.pathname + tableName;
 
     fetch(url)
         .then(response => response.json())
         .then(data => {
-                data.forEach(rowData => {
-                    const table = document.getElementById(tableName);
-                    const tbody = table.querySelector("tbody");
+                const table = document.getElementById(tableName);
+                const tbody = table.querySelector("tbody");
 
-                    // создаем новый элемент строки (tr)
+                for (let j = 0; j < 12; j++) {
                     let row = document.createElement('tr');
-
-                    addCell(rowData.hour_num, row);
-                    addCell(rowData.month_1, row);
-                    addCell(rowData.month_2, row);
-                    addCell(rowData.month_3, row);
-                    addCell(rowData.month_4, row);
-                    addCell(rowData.month_5, row);
-                    addCell(rowData.month_6, row);
-                    addCell(rowData.month_7, row);
-                    addCell(rowData.month_8, row);
-                    addCell(rowData.month_9, row);
-                    addCell(rowData.month_10, row);
-                    addCell(rowData.month_11, row);
-                    addCell(rowData.month_12, row);
-
+                    addCell(MONTH[j], row);
+                    for (let i = 0; i < 24; i++) {
+                        let dataMonth = getDataMonth(i, j, data);
+                        addCell(dataMonth, row);
+                    }
                     tbody.appendChild(row);
-                });
+                }
             }
         );
+}
+
+function addCell(cellData, row) {
+    let cell = document.createElement('td');
+    cell.textContent = cellData;
+    row.appendChild(cell);
+}
+
+function getDataMonth(i, j, data) {
+    switch (j) {
+        case 0:
+            return data[i].month_1;
+        case 1:
+            return data[i].month_2;
+        case 2:
+            return data[i].month_3;
+        case 3:
+            return data[i].month_4;
+        case 4:
+            return data[i].month_5;
+        case 5:
+            return data[i].month_6;
+        case 6:
+            return data[i].month_7;
+        case 7:
+            return data[i].month_8;
+        case 8:
+            return data[i].month_9;
+        case 9:
+            return data[i].month_10;
+        case 10:
+            return data[i].month_11;
+        case 11:
+            return data[i].month_12;
+    }
 }

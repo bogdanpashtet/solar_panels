@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block styles %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href={% static "styles/index.css" %}>
 {% endblock %}
 
@@ -33,22 +34,34 @@
         </div>
 
         <h3>Диффузная солнечная радиация по часам</h3>
-        <table id="diffuse-hourly">
+        <table id="diffuse-hourly" class="table small">
             <thead>
             <tr>
-                <th>Час</th>
-                <th>Январь</th>
-                <th>Февраль</th>
-                <th>Март</th>
-                <th>Апрель</th>
-                <th>Май</th>
-                <th>Июнь</th>
-                <th>Июль</th>
-                <th>Август</th>
-                <th>Сентябрь</th>
-                <th>Октябрь</th>
-                <th>Ноябрь</th>
-                <th>Декабрь</th>
+                <th scope="col">Месяц</th>
+                <th scope="col">0-1</th>
+                <th scope="col">1-2</th>
+                <th scope="col">2-3</th>
+                <th scope="col">3-4</th>
+                <th scope="col">4-5</th>
+                <th scope="col">5-6</th>
+                <th scope="col">6-7</th>
+                <th scope="col">7-8</th>
+                <th scope="col">8-9</th>
+                <th scope="col">9-10</th>
+                <th scope="col">10-11</th>
+                <th scope="col">11-12</th>
+                <th scope="col">12-13</th>
+                <th scope="col">13-14</th>
+                <th scope="col">14-15</th>
+                <th scope="col">15-16</th>
+                <th scope="col">16-17</th>
+                <th scope="col">17-18</th>
+                <th scope="col">18-19</th>
+                <th scope="col">19-20</th>
+                <th scope="col">20-21</th>
+                <th scope="col">21-22</th>
+                <th scope="col">22-23</th>
+                <th scope="col">23-24</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -60,22 +73,34 @@
         </div>
 
         <h3>Суммарная солнечная радиация по часам</h3>
-        <table id="total-hourly">
+        <table id="total-hourly" class="table small">
             <thead>
             <tr>
-                <th>Час</th>
-                <th>Январь</th>
-                <th>Февраль</th>
-                <th>Март</th>
-                <th>Апрель</th>
-                <th>Май</th>
-                <th>Июнь</th>
-                <th>Июль</th>
-                <th>Август</th>
-                <th>Сентябрь</th>
-                <th>Октябрь</th>
-                <th>Ноябрь</th>
-                <th>Декабрь</th>
+                <th scope="col">Месяц</th>
+                <th scope="col">0-1</th>
+                <th scope="col">1-2</th>
+                <th scope="col">2-3</th>
+                <th scope="col">3-4</th>
+                <th scope="col">4-5</th>
+                <th scope="col">5-6</th>
+                <th scope="col">6-7</th>
+                <th scope="col">7-8</th>
+                <th scope="col">8-9</th>
+                <th scope="col">9-10</th>
+                <th scope="col">10-11</th>
+                <th scope="col">11-12</th>
+                <th scope="col">12-13</th>
+                <th scope="col">13-14</th>
+                <th scope="col">14-15</th>
+                <th scope="col">15-16</th>
+                <th scope="col">16-17</th>
+                <th scope="col">17-18</th>
+                <th scope="col">18-19</th>
+                <th scope="col">19-20</th>
+                <th scope="col">20-21</th>
+                <th scope="col">21-22</th>
+                <th scope="col">22-23</th>
+                <th scope="col">23-24</th>
             </tr>
             </thead>
             <tbody></tbody>
@@ -87,22 +112,34 @@
         </div>
 
         <h3>Прямая солнечная радиация по часам</h3>
-        <table id="direct-hourly">
+        <table id="direct-hourly" class="table small">
             <thead>
             <tr>
-                <th>Час</th>
-                <th>Январь</th>
-                <th>Февраль</th>
-                <th>Март</th>
-                <th>Апрель</th>
-                <th>Май</th>
-                <th>Июнь</th>
-                <th>Июль</th>
-                <th>Август</th>
-                <th>Сентябрь</th>
-                <th>Октябрь</th>
-                <th>Ноябрь</th>
-                <th>Декабрь</th>
+                <th scope="col">Месяц</th>
+                <th scope="col">0-1</th>
+                <th scope="col">1-2</th>
+                <th scope="col">2-3</th>
+                <th scope="col">3-4</th>
+                <th scope="col">4-5</th>
+                <th scope="col">5-6</th>
+                <th scope="col">6-7</th>
+                <th scope="col">7-8</th>
+                <th scope="col">8-9</th>
+                <th scope="col">9-10</th>
+                <th scope="col">10-11</th>
+                <th scope="col">11-12</th>
+                <th scope="col">12-13</th>
+                <th scope="col">13-14</th>
+                <th scope="col">14-15</th>
+                <th scope="col">15-16</th>
+                <th scope="col">16-17</th>
+                <th scope="col">17-18</th>
+                <th scope="col">18-19</th>
+                <th scope="col">19-20</th>
+                <th scope="col">20-21</th>
+                <th scope="col">21-22</th>
+                <th scope="col">22-23</th>
+                <th scope="col">23-24</th>
             </tr>
             </thead>
             <tbody></tbody>
