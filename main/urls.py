@@ -4,6 +4,6 @@ from main.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name=''),
+    path('', index, name='index'),
     path('station/<int:id>/', StationInfo.as_view()),
 ]
