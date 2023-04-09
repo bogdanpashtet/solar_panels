@@ -18,4 +18,9 @@ urlpatterns = [
     path('station/<int:id>/direct-daily', stations_direct_daily_get),
     path('station/<int:id>/direct-monthly', stations_direct_monthly_get),
     path('station/<int:id>/direct-hourly', stations_direct_hourly_get),
+
+    # скачивание CSV
+    path('station/<int:id>/diffuse-hourly/csv', stations_diffuse_hourly_get_csv),
+    path('station/<int:id>/total-hourly/csv', stations_total_hourly_get_csv),
+    path('station/<int:id>/direct-hourly/csv', stations_direct_hourly_get_csv),
 ]
