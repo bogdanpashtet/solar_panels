@@ -1,8 +1,8 @@
 const API_V1_PREFIX = '/api/v1';
 const MONTH = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-const HOURS = ['0-1', '1-2', '2-3', '3-4', '4-5', '5-6', '6-7', '7-8', '8-9', '9-10', '10-11', '11-12', '12-13', '13-14', '14-15', '15-16', '16-17', '17-18', '18-19', '19-20', '20-21', '21-22', '22-23', '23-24']
+const HOURS = ['0-1', '1-2', '2-3', '3-4', '4-5', '5-6', '6-7', '7-8', '8-9', '9-10', '10-11', '11-12', '12-13', '13-14', '14-15', '15-16', '16-17', '17-18', '18-19', '19-20', '20-21', '21-22', '22-23', '23-24'];
 
-const MONTH_INDEX = 15 // если нужна информация по месяцам обозначим за 15
+const MONTH_INDEX = 15; // если нужна информация по месяцам обозначим за 15
 
 const COLOR_BACKGROUND_RED = 'rgba(255, 99, 132, 0.2)';
 const COLOR_BORDER_RED = 'rgba(255, 99, 132, 1)';
@@ -21,14 +21,10 @@ let url = window.location.origin + API_V1_PREFIX + window.location.pathname;
 fetch(url)
     .then(response => response.json())
     .then(data => {
-            d3.select('.station_name')
-                .text(data[0].station_name);
-            d3.select('.station_region')
-                .text(data[0].region);
-            d3.select('.station_latitude')
-                .text(data[0].latitude);
-            d3.select('.station_longitude')
-                .text(data[0].longitude);
+            document.getElementById("station_name").textContent = data[0].station_name;
+            document.getElementById("station_region").textContent = data[0].region;
+            document.getElementById("station_latitude").textContent = data[0].latitude;
+            document.getElementById("station_longitude").textContent = data[0].longitude;
         }
     );
 

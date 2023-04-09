@@ -1,5 +1,5 @@
 from django.urls import path
-from json_api.views import *
+from api.views import *
 
 urlpatterns = [
     path('stations', stations_info_get),

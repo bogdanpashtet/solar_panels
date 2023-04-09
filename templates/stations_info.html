@@ -7,143 +7,158 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <script type="text/javascript" src={% static "js/station_info.js" %}></script>
 {% endblock %}
 
 {% block content %}
-    <div class="parent">
-        <div class="info_container">
-            <div class="station_name"></div>
-            <div class="station_region"></div>
-            <div class="station_coordinates">
-                <div class="station_latitude"></div>
-                <div class="station_longitude"></div>
+    <div class="container">
+        <div class="row text-center">
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h2 id="station_name"></h2>
+                    <h4 id="station_region"></h4>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-6">Широта</div>
+                        <div class="col-6">Долгота</div>
+                    </div>
+                    <div class="row">
+                        <div id="station_latitude" class="col-6"></div>
+                        <div id="station_longitude" class="col-6"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chartBox">
+                <h1>Альбедо</h1>
+                <canvas id="albedo"></canvas>
+            </div>
+
+            <div class="chartBox">
+                <h1>Месячные суммы солнечной радиации</h1>
+                <canvas id="monthly"></canvas>
+            </div>
+
+            <div class="chartBox">
+                <h1>Среднемесячный часовой приход для июня</h1>
+                <canvas id="june"></canvas>
+            </div>
+
+            <div class="chartBox">
+                <h1>Среднемесячный часовой приход для янавря</h1>
+                <canvas id="january"></canvas>
+            </div>
+
+            <div class="table-container">
+                <h3>Диффузная солнечная радиация по часам</h3>
+                <table id="diffuse-hourly" class="table small">
+                    <thead>
+                    <tr>
+                        <th scope="col">Месяц</th>
+                        <th scope="col">0-1</th>
+                        <th scope="col">1-2</th>
+                        <th scope="col">2-3</th>
+                        <th scope="col">3-4</th>
+                        <th scope="col">4-5</th>
+                        <th scope="col">5-6</th>
+                        <th scope="col">6-7</th>
+                        <th scope="col">7-8</th>
+                        <th scope="col">8-9</th>
+                        <th scope="col">9-10</th>
+                        <th scope="col">10-11</th>
+                        <th scope="col">11-12</th>
+                        <th scope="col">12-13</th>
+                        <th scope="col">13-14</th>
+                        <th scope="col">14-15</th>
+                        <th scope="col">15-16</th>
+                        <th scope="col">16-17</th>
+                        <th scope="col">17-18</th>
+                        <th scope="col">18-19</th>
+                        <th scope="col">19-20</th>
+                        <th scope="col">20-21</th>
+                        <th scope="col">21-22</th>
+                        <th scope="col">22-23</th>
+                        <th scope="col">23-24</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <h3>Суммарная солнечная радиация по часам</h3>
+                <table id="total-hourly" class="table small">
+                    <thead>
+                    <tr>
+                        <th scope="col">Месяц</th>
+                        <th scope="col">0-1</th>
+                        <th scope="col">1-2</th>
+                        <th scope="col">2-3</th>
+                        <th scope="col">3-4</th>
+                        <th scope="col">4-5</th>
+                        <th scope="col">5-6</th>
+                        <th scope="col">6-7</th>
+                        <th scope="col">7-8</th>
+                        <th scope="col">8-9</th>
+                        <th scope="col">9-10</th>
+                        <th scope="col">10-11</th>
+                        <th scope="col">11-12</th>
+                        <th scope="col">12-13</th>
+                        <th scope="col">13-14</th>
+                        <th scope="col">14-15</th>
+                        <th scope="col">15-16</th>
+                        <th scope="col">16-17</th>
+                        <th scope="col">17-18</th>
+                        <th scope="col">18-19</th>
+                        <th scope="col">19-20</th>
+                        <th scope="col">20-21</th>
+                        <th scope="col">21-22</th>
+                        <th scope="col">22-23</th>
+                        <th scope="col">23-24</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <h3>Прямая солнечная радиация по часам</h3>
+                <table id="direct-hourly" class="table small">
+                    <thead>
+                    <tr>
+                        <th scope="col">Месяц</th>
+                        <th scope="col">0-1</th>
+                        <th scope="col">1-2</th>
+                        <th scope="col">2-3</th>
+                        <th scope="col">3-4</th>
+                        <th scope="col">4-5</th>
+                        <th scope="col">5-6</th>
+                        <th scope="col">6-7</th>
+                        <th scope="col">7-8</th>
+                        <th scope="col">8-9</th>
+                        <th scope="col">9-10</th>
+                        <th scope="col">10-11</th>
+                        <th scope="col">11-12</th>
+                        <th scope="col">12-13</th>
+                        <th scope="col">13-14</th>
+                        <th scope="col">14-15</th>
+                        <th scope="col">15-16</th>
+                        <th scope="col">16-17</th>
+                        <th scope="col">17-18</th>
+                        <th scope="col">18-19</th>
+                        <th scope="col">19-20</th>
+                        <th scope="col">20-21</th>
+                        <th scope="col">21-22</th>
+                        <th scope="col">22-23</th>
+                        <th scope="col">23-24</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
-
-        <h1>Альбедо</h1>
-        <div class="chartBox">
-            <canvas id="albedo"></canvas>
-        </div>
-
-        <h1>Месячные суммы солнечной радиации</h1>
-        <div class="chartBox">
-            <canvas id="monthly"></canvas>
-        </div>
-
-        <h1>Среднемесячный часовой приход для июня</h1>
-        <div class="chartBox">
-            <canvas id="june"></canvas>
-        </div>
-
-        <h1>Среднемесячный часовой приход для янавря</h1>
-        <div class="chartBox">
-            <canvas id="january"></canvas>
-        </div>
-
-        <h3>Диффузная солнечная радиация по часам</h3>
-        <table id="diffuse-hourly" class="table small">
-            <thead>
-            <tr>
-                <th scope="col">Месяц</th>
-                <th scope="col">0-1</th>
-                <th scope="col">1-2</th>
-                <th scope="col">2-3</th>
-                <th scope="col">3-4</th>
-                <th scope="col">4-5</th>
-                <th scope="col">5-6</th>
-                <th scope="col">6-7</th>
-                <th scope="col">7-8</th>
-                <th scope="col">8-9</th>
-                <th scope="col">9-10</th>
-                <th scope="col">10-11</th>
-                <th scope="col">11-12</th>
-                <th scope="col">12-13</th>
-                <th scope="col">13-14</th>
-                <th scope="col">14-15</th>
-                <th scope="col">15-16</th>
-                <th scope="col">16-17</th>
-                <th scope="col">17-18</th>
-                <th scope="col">18-19</th>
-                <th scope="col">19-20</th>
-                <th scope="col">20-21</th>
-                <th scope="col">21-22</th>
-                <th scope="col">22-23</th>
-                <th scope="col">23-24</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <h3>Суммарная солнечная радиация по часам</h3>
-        <table id="total-hourly" class="table small">
-            <thead>
-            <tr>
-                <th scope="col">Месяц</th>
-                <th scope="col">0-1</th>
-                <th scope="col">1-2</th>
-                <th scope="col">2-3</th>
-                <th scope="col">3-4</th>
-                <th scope="col">4-5</th>
-                <th scope="col">5-6</th>
-                <th scope="col">6-7</th>
-                <th scope="col">7-8</th>
-                <th scope="col">8-9</th>
-                <th scope="col">9-10</th>
-                <th scope="col">10-11</th>
-                <th scope="col">11-12</th>
-                <th scope="col">12-13</th>
-                <th scope="col">13-14</th>
-                <th scope="col">14-15</th>
-                <th scope="col">15-16</th>
-                <th scope="col">16-17</th>
-                <th scope="col">17-18</th>
-                <th scope="col">18-19</th>
-                <th scope="col">19-20</th>
-                <th scope="col">20-21</th>
-                <th scope="col">21-22</th>
-                <th scope="col">22-23</th>
-                <th scope="col">23-24</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <h3>Прямая солнечная радиация по часам</h3>
-        <table id="direct-hourly" class="table small">
-            <thead>
-            <tr>
-                <th scope="col">Месяц</th>
-                <th scope="col">0-1</th>
-                <th scope="col">1-2</th>
-                <th scope="col">2-3</th>
-                <th scope="col">3-4</th>
-                <th scope="col">4-5</th>
-                <th scope="col">5-6</th>
-                <th scope="col">6-7</th>
-                <th scope="col">7-8</th>
-                <th scope="col">8-9</th>
-                <th scope="col">9-10</th>
-                <th scope="col">10-11</th>
-                <th scope="col">11-12</th>
-                <th scope="col">12-13</th>
-                <th scope="col">13-14</th>
-                <th scope="col">14-15</th>
-                <th scope="col">15-16</th>
-                <th scope="col">16-17</th>
-                <th scope="col">17-18</th>
-                <th scope="col">18-19</th>
-                <th scope="col">19-20</th>
-                <th scope="col">20-21</th>
-                <th scope="col">21-22</th>
-                <th scope="col">22-23</th>
-                <th scope="col">23-24</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
     </div>
 {% endblock %}
