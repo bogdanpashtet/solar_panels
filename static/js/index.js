@@ -1,9 +1,6 @@
 const API_V1_PREFIX = '/api/v1'
 
 const svg = d3.select('svg')
-    .on("dblclick", function () {
-        svg.transition().duration(700).call(zoom.transform, d3.zoomIdentity)
-    })
     .style('transition', 'transform 0.3s ease-in-out');
 
 const projection = d3.geoMercator()
@@ -38,70 +35,71 @@ d3.json('static/json/ussr.json')
             .enter().append('path')
             .attr("fill", "#ccc")
             .attr("stroke", "#333")
-            .call(zoom)
             .on("dblclick.zoom", null)
             .attr('d', d => pathGenerator(d));
 
         createPoints();
     });
 
+svg.call(zoom);
+
 function createPoints() {
     let url = window.location.origin + API_V1_PREFIX + '/stations';
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
 
-                    data.forEach(function (d) {
-                        d.latitude = +d.latitude;
-                        d.longitude = +d.longitude;
-                        d.id = d.id.toString();
+                data.forEach(function (d) {
+                    d.latitude = +d.latitude;
+                    d.longitude = +d.longitude;
+                    d.id = d.id.toString();
+                });
+
+                g.selectAll("g")
+                    .data(data)
+                    .enter()
+                    .append("g")
+                    .append("a")
+                    .attr("xlink:href", d => {
+                        return window.location.origin + '/station/' + d.id;
+                    })
+                    .append("circle")
+                    .attr("id", d => {
+                        return d.id;
+                    })
+                    .attr("cx", d => {
+                        return projection([d.longitude, d.latitude])[0];
+                    })
+                    .attr("cy", d => {
+                        return projection([d.longitude, d.latitude])[1];
+                    })
+                    .attr("r", 5)
+                    .style("fill", "red")
+                    .style("stroke", "black")
+                    .style("stroke-width", 1)
+                    .on("mouseover", function () {
+                        let size = d3.select(this).attr('r')
+
+                        d3.select(this)
+                            .style("fill", "lightgreen")
+                            .attr("r", size * 1.3);
+                    })
+                    .on("mouseout", function () {
+                        let size = d3.select(this).attr('r')
+
+                        d3.select(this)
+                            .style("fill", "red")
+                            .attr("r", size * 10 / 13);
+                    })
+                    .append("title")
+                    .text(function (d) {
+                        return d.station_name + ", " + d.region;
                     });
 
-                    g.selectAll("circle")
-                        .data(data)
-                        .enter()
-                        .append("circle")
-                        .call(zoom)
-                        .attr("id", d => {
-                            return d.id;
-                        })
-                        .attr("cx", d => {
-                            return projection([d.longitude, d.latitude])[0];
-                        })
-                        .attr("cy", d => {
-                            return projection([d.longitude, d.latitude])[1];
-                        })
-                        // .append("a")
-                        // .attr("href", function (d) {
-                        //     return "http://example.com/point/" + d.id;
-                        // })
-                        .attr("r", 5)
-                        .style("fill", "red")
-                        .style("stroke", "black")
-                        .style("stroke-width", 1)
-                        .on("mouseover", function () {
-                            let size = d3.select(this).attr('r')
-
-                            d3.select(this)
-                                .style("fill", "lightgreen")
-                                .attr("r", size * 1.3);
-                        })
-                        .on("mouseout", function () {
-                            let size = d3.select(this).attr('r')
-
-                            d3.select(this)
-                                .style("fill", "red")
-                                .attr("r", size * 10 / 13);
-                        })
-                        .append("title")
-                        .text(function (d) {
-                            return d.station_name + ", " + d.region;
-                        });
-
-                    createList(data);
-                }
-            );
+                createList(data);
+            }
+        );
 }
 
 function createList(data) {
@@ -112,12 +110,18 @@ function createList(data) {
         .data(data)
         .enter()
         .append("li")
+        .append("a")
+        .attr("href", d => {
+            return window.location.origin + '/station/' + d.id;
+        })
         .attr("id", function (d) {
             return d.id;
         })
         .text(function (d) {
             return d.station_name + ', ' + d.region;
         })
+        .style("color", "black")
+        .style("text-decoration", "none")
         .on("mouseover", function (d) {
             const listItem = d3.select(this)
                 .style("cursor", "pointer")
