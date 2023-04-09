@@ -33,6 +33,12 @@ createTable('diffuse-hourly');
 createTable('total-hourly');
 createTable('direct-hourly');
 
+// ---------------------- ССЫЛКИ НА СКАЧИВАНИЕ ----------------------
+createDownloadLink('#download-csv-btn-diffuse', 'diffuse-hourly/csv');
+createDownloadLink('#download-csv-btn-total', 'total-hourly/csv');
+createDownloadLink('#download-csv-btn-direct', 'direct-hourly/csv');
+
+
 // ---------------------- АЛЬБЕДО ----------------------
 
 let dataSet = {
@@ -196,4 +202,15 @@ function getDataMonth(i, j, data) {
         case 11:
             return data[i].month_12;
     }
+}
+
+function createDownloadLink(button_id, path) {
+    document.querySelector(button_id)
+        .addEventListener('click', () => {
+            url = window.location.origin + API_V1_PREFIX + window.location.pathname + path;
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.click();
+        });
 }
