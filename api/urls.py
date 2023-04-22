@@ -23,4 +23,7 @@ urlpatterns = [
     path('station/<int:id>/diffuse-hourly/csv', stations_diffuse_hourly_get_csv),
     path('station/<int:id>/total-hourly/csv', stations_total_hourly_get_csv),
     path('station/<int:id>/direct-hourly/csv', stations_direct_hourly_get_csv),
+
+    # расчет
+    path('calc/by-day', calc_by_day),
 ]

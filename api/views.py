@@ -1,6 +1,9 @@
 import csv
 
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
 from main.models import *
 
 
@@ -77,10 +80,14 @@ def stations_direct_hourly_get(request, **kwargs):
 
 
 def writeDataHourly(writer, data):
-    writer.writerow(['hour_num', 'month_1', 'month_2', 'month_3', 'month_4', 'month_5', 'month_6', 'month_7', 'month_8', 'month_9', 'month_10', 'month_11', 'month_12'])
+    writer.writerow(
+        ['hour_num', 'month_1', 'month_2', 'month_3', 'month_4', 'month_5', 'month_6', 'month_7', 'month_8', 'month_9',
+         'month_10', 'month_11', 'month_12'])
 
     for i in data:
-        writer.writerow([i["hour_num"], i["month_1"], i["month_2"], i["month_3"], i["month_4"], i["month_5"], i["month_6"], i["month_7"], i["month_8"], i["month_9"], i["month_10"], i["month_11"], i["month_12"]])
+        writer.writerow(
+            [i["hour_num"], i["month_1"], i["month_2"], i["month_3"], i["month_4"], i["month_5"], i["month_6"],
+             i["month_7"], i["month_8"], i["month_9"], i["month_10"], i["month_11"], i["month_12"]])
 
 
 # API методы для скачивания CSV
@@ -89,7 +96,8 @@ def stations_diffuse_hourly_get_csv(request, **kwargs):
     response['Content-Disposition'] = 'attachment; filename="' + str(kwargs['id']) + '_diffuse_hourly' + '.csv"'
 
     station_id = (kwargs['id'] - 1) * 24 + 1
-    data = DiffuseHourlySolarRadiation.objects.filter(station_id_id__gte=station_id, station_id_id__lte=station_id + 23).values()
+    data = DiffuseHourlySolarRadiation.objects.filter(station_id_id__gte=station_id,
+                                                      station_id_id__lte=station_id + 23).values()
 
     writer = csv.writer(response)
     writeDataHourly(writer, data)
@@ -102,7 +110,8 @@ def stations_total_hourly_get_csv(request, **kwargs):
     response['Content-Disposition'] = 'attachment; filename="' + str(kwargs['id']) + '_total_hourly' + '.csv"'
 
     station_id = (kwargs['id'] - 1) * 24 + 3985
-    data = TotalHourlySolarRadiation.objects.filter(station_id_id__gte=station_id, station_id_id__lte=station_id + 23).values()
+    data = TotalHourlySolarRadiation.objects.filter(station_id_id__gte=station_id,
+                                                    station_id_id__lte=station_id + 23).values()
 
     writer = csv.writer(response)
     writeDataHourly(writer, data)
@@ -115,9 +124,22 @@ def stations_direct_hourly_get_csv(request, **kwargs):
     response['Content-Disposition'] = 'attachment; filename="' + str(kwargs['id']) + '_direct_hourly' + '.csv"'
 
     station_id = (kwargs['id'] - 1) * 24 + 1
-    data = DirectHourlySolarRadiation.objects.filter(station_id_id__gte=station_id, station_id_id__lte=station_id + 23).values()
+    data = DirectHourlySolarRadiation.objects.filter(station_id_id__gte=station_id,
+                                                     station_id_id__lte=station_id + 23).values()
 
     writer = csv.writer(response)
     writeDataHourly(writer, data)
 
     return response
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def calc_by_day(request):
+    for file in request.FILES.values():
+        print(file.name)
+
+
+
+    data = {'message': 'hello from calc_by_day'}
+    return JsonResponse(data, safe=False)

@@ -11,3 +11,7 @@ class StationInfo(ListView):
     model = Stations
     template_name = 'stations_info.html'
     extra_context = {'title': '?????????'}
+
+
+def calculate(request):
+    return render(request, 'calculate.html')
