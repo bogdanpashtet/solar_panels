@@ -16,72 +16,91 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <h2 class="text-center">Выберите тип расчета:</h2>
-                <form>
+                <form enctype="multipart/form-data">
                     <div class="form-group">
                         <input type="file" class="btn btn-secondary" id="load-csv-button"/>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="calculationType" id="calculationDay"
+                            <input class="form-check-input" type="radio" name="calculation-type" id="calculation-day"
                                    value="day" checked>
-                            <label class="form-check-label" for="calculationDay">
+                            <label class="form-check-label" for="calculation-day">
                                 Расчет дня
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="calculationType" id="calculationMonth"
+                            <input class="form-check-input" type="radio" name="calculation-type" id="calculation-month"
                                    value="month">
-                            <label class="form-check-label" for="calculationMonth">
+                            <label class="form-check-label" for="calculation-month">
                                 Расчет месяца
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="calculationType" id="calculationYear"
+                            <input class="form-check-input" type="radio" name="calculation-type" id="calculation-year"
                                    value="year">
-                            <label class="form-check-label" for="calculationYear">
+                            <label class="form-check-label" for="calculation-year">
                                 Расчет года
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="calculationType" id="calculationCustom"
+                            <input class="form-check-input" type="radio" name="calculation-type" id="calculation-custom"
                                    value="custom">
-                            <label class="form-check-label" for="calculationCustom">
+                            <label class="form-check-label" for="calculation-custom">
                                 Расчет по произвольному интервалу
                             </label>
                         </div>
                     </div>
-                    <div class="row m-2">
-                        <div class="form-group col-3">
-                            <label for="latitude">Широта:</label>
-                            <input type="number" class="form-control" id="latitude" name="latitude">
+                    <div class="form-group m-2">
+                        <input class="form-check-input" type="checkbox" id="calculate-max-angle"
+                               name="calculateMaxAngle">
+                        <label class="form-check-label" for="calculate-max-angle">
+                            Рассчитать максимальный угол
+                        </label>
+                    </div>
+                    <div id="by-day-field-container">
+                        <div class="row m-2">
+                            <div class="form-group col-4">
+                                <label for="by-day-day">Номер дня:</label>
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="by-day-month">Номер месяца:</label>
+                            </div>
                         </div>
-                        <div class="form-group col-3">
-                            <label for="azimuth">Азимут:</label>
-                            <input type="number" class="form-control" id="azimuth" name="azimuth">
-                        </div>
-                        <div class="form-group col-3">
-                            <label for="tiltAngle">Угол наклона:</label>
-                            <input type="number" class="form-control" id="tiltAngle" name="tiltAngle">
+                        <div class="row m-2">
+                            <div class="form-group col-4">
+                                <input type="number" class="form-control" id="by-day-day" name="by-day-day">
+                            </div>
+                            <div class="form-group col-4">
+                                <input type="number" class="form-control" id="by-day-month" name="by-day-month">
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group m-2">
-                        <div class="row">
-                            <div class="form-check col-5">
-                                <input class="form-check-input" type="checkbox" id="buildChart" name="buildChart">
-                                <label class="form-check-label" for="buildChart">
-                                    Построить график
-                                </label>
+                    <div id="input-field-container">
+                        <div class="row m-2">
+                            <div class="form-group col-3">
+                                <label for="latitude">Широта:</label>
                             </div>
-                            <div class="form-check col-5">
-                                <input class="form-check-input" type="checkbox" id="calculateMaxAngle"
-                                       name="calculateMaxAngle">
-                                <label class="form-check-label" for="calculateMaxAngle">
-                                    Рассчитать максимальный угол
-                                </label>
+                            <div class="form-group col-3">
+                                <label for="azimuth">Азимут:</label>
+                            </div>
+                            <div class="form-group col-3">
+                                <label for="tilt-angle">Угол наклона:</label>
+                            </div>
+                        </div>
+                        <div class="row m-2">
+                            <div class="form-group col-3">
+                                <input type="number" class="form-control" id="latitude" name="latitude">
+                            </div>
+                            <div class="form-group col-3">
+                                <input type="number" class="form-control" id="azimuth" name="azimuth">
+                            </div>
+                            <div class="form-group col-3">
+                                <input type="number" class="form-control" id="tilt-angle" name="tilt-angle">
                             </div>
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary" id="calculate-button">Рассчитать</button>
                     <button type="button" class="btn btn-success" id="downloadCsvBtn">Скачать CSV</button>
                 </form>
+                <div style="display: none" class="alert alert-danger" role="alert" id="error-message"></div>
             </div>
         </div>
     </div>

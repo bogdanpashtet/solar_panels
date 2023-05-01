@@ -1,38 +1,45 @@
 import csv
 
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-
+from api.utils import *
+import pandas as pd
 from main.models import *
 
 
+@require_http_methods(["GET"])
 def station_info_get(request, **kwargs):
     data = Stations.objects.filter(id=kwargs['id']).values()
     return JsonResponse(list(data), safe=False)
 
 
+@require_http_methods(["GET"])
 def stations_info_get(request):
     data = list(Stations.objects.values())
     return JsonResponse(data, safe=False)
 
 
+@require_http_methods(["GET"])
 def stations_albedo_get(request, **kwargs):
     data = list(Albedo.objects.filter(station_id=kwargs['id']).values())
     return JsonResponse(data, safe=False)
 
 
 # diffuse solar radiation
+@require_http_methods(["GET"])
 def stations_diffuse_daily_get(request, **kwargs):
     data = list(DiffuseDailySolarRadiation.objects.filter(station_id=kwargs['id']).values())
     return JsonResponse(data, safe=False)
 
 
+@require_http_methods(["GET"])
 def stations_diffuse_monthly_get(request, **kwargs):
     data = list(DiffuseMonthlySolarRadiation.objects.filter(station_id=kwargs['id']).values())
     return JsonResponse(data, safe=False)
 
 
+@require_http_methods(["GET"])
 def stations_diffuse_hourly_get(request, **kwargs):
     station_id = (kwargs['id'] - 1) * 24 + 1
     data = list(DiffuseHourlySolarRadiation.objects.filter(station_id_id__gte=station_id,
@@ -41,16 +48,19 @@ def stations_diffuse_hourly_get(request, **kwargs):
 
 
 # total solar radiation
+@require_http_methods(["GET"])
 def stations_total_daily_get(request, **kwargs):
     data = list(TotalDailySolarRadiation.objects.filter(station_id=kwargs["id"]).values())
     return JsonResponse(data, safe=False)
 
 
+@require_http_methods(["GET"])
 def stations_total_monthly_get(request, **kwargs):
     data = list(TotalMonthlySolarRadiation.objects.filter(station_id=kwargs['id']).values())
     return JsonResponse(data, safe=False)
 
 
+@require_http_methods(["GET"])
 def stations_total_hourly_get(request, **kwargs):
     # это заглушка, потому что данные в базе лежат криво, а лазить и менять id в ~12000 строках я не хочу (датасеты формаировал, к сожалению, не я)
     # поэтому делаем выборку с 3985 индекса и по каджому часу. аналогично и в других "часовых" данных, только там индексация начинается с единицы
@@ -62,16 +72,19 @@ def stations_total_hourly_get(request, **kwargs):
 
 
 # total solar radiation
+@require_http_methods(["GET"])
 def stations_direct_daily_get(request, **kwargs):
     data = list(DirectDailySolarRadiation.objects.filter(station_id=kwargs['id']).values())
     return JsonResponse(data, safe=False)
 
 
+@require_http_methods(["GET"])
 def stations_direct_monthly_get(request, **kwargs):
     data = list(DirectMonthlySolarRadiation.objects.filter(station_id=kwargs['id']).values())
     return JsonResponse(data, safe=False)
 
 
+@require_http_methods(["GET"])
 def stations_direct_hourly_get(request, **kwargs):
     station_id = (kwargs['id'] - 1) * 24 + 1
     data = list(DirectHourlySolarRadiation.objects.filter(station_id_id__gte=station_id,
@@ -79,18 +92,8 @@ def stations_direct_hourly_get(request, **kwargs):
     return JsonResponse(data, safe=False)
 
 
-def writeDataHourly(writer, data):
-    writer.writerow(
-        ['hour_num', 'month_1', 'month_2', 'month_3', 'month_4', 'month_5', 'month_6', 'month_7', 'month_8', 'month_9',
-         'month_10', 'month_11', 'month_12'])
-
-    for i in data:
-        writer.writerow(
-            [i["hour_num"], i["month_1"], i["month_2"], i["month_3"], i["month_4"], i["month_5"], i["month_6"],
-             i["month_7"], i["month_8"], i["month_9"], i["month_10"], i["month_11"], i["month_12"]])
-
-
 # API методы для скачивания CSV
+@require_http_methods(["GET"])
 def stations_diffuse_hourly_get_csv(request, **kwargs):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="' + str(kwargs['id']) + '_diffuse_hourly' + '.csv"'
@@ -100,11 +103,12 @@ def stations_diffuse_hourly_get_csv(request, **kwargs):
                                                       station_id_id__lte=station_id + 23).values()
 
     writer = csv.writer(response)
-    writeDataHourly(writer, data)
+    write_data_hourly(writer, data)
 
     return response
 
 
+@require_http_methods(["GET"])
 def stations_total_hourly_get_csv(request, **kwargs):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="' + str(kwargs['id']) + '_total_hourly' + '.csv"'
@@ -114,11 +118,12 @@ def stations_total_hourly_get_csv(request, **kwargs):
                                                     station_id_id__lte=station_id + 23).values()
 
     writer = csv.writer(response)
-    writeDataHourly(writer, data)
+    write_data_hourly(writer, data)
 
     return response
 
 
+@require_http_methods(["GET"])
 def stations_direct_hourly_get_csv(request, **kwargs):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="' + str(kwargs['id']) + '_direct_hourly' + '.csv"'
@@ -128,7 +133,7 @@ def stations_direct_hourly_get_csv(request, **kwargs):
                                                      station_id_id__lte=station_id + 23).values()
 
     writer = csv.writer(response)
-    writeDataHourly(writer, data)
+    write_data_hourly(writer, data)
 
     return response
 
@@ -137,9 +142,26 @@ def stations_direct_hourly_get_csv(request, **kwargs):
 @require_http_methods(["POST"])
 def calc_by_day(request):
     for file in request.FILES.values():
-        print(file.name)
+        try:
+            data = pd.read_csv(file, decimal=",", delimiter=';')
+        except Exception as e:
+            print("Ошибка при чтении csv файла: ", e)
+            return HttpResponseBadRequest('Invalid data')
+        if request.POST.get('max-angle') == 'false':
+            res = calc_day_by_hours(data,
+                                    int(request.POST.get('by-day-month')),
+                                    int(request.POST.get('by-day-day')),
+                                    int(request.POST.get('latitude')),
+                                    int(request.POST.get('tilt-angle')),
+                                    int(request.POST.get('azimuth')))
+        else:
+            res = max_tilt_angle(calc_day_by_hours,
+                                 data,
+                                 int(request.POST.get('by-day-month')),
+                                 int(request.POST.get('by-day-day')),
+                                 latitude=int(request.POST.get('latitude')),
+                                 azimuth=int(request.POST.get('azimuth')))
 
-
-
-    data = {'message': 'hello from calc_by_day'}
-    return JsonResponse(data, safe=False)
+        res_json = pd.Series(res).to_json(orient='values')
+        return JsonResponse(res_json, safe=False)
+    return HttpResponseBadRequest('Отсутвует файл')
