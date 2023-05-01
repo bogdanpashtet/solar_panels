@@ -17,20 +17,26 @@ document.getElementById('load-csv-button')
 document.querySelectorAll('input[name="calculation-type"]').forEach(radio => {
     radio.addEventListener('change', () => {
         const value = radio.value;
-        switch (getRadioButtonName()) {
+        switch (getRadioButtonName('calculation-type')) {
             case 'day':
                 document.getElementById('by-day-field-container').style.display = 'block';
                 document.getElementById('by-day-day').value = '';
                 document.getElementById('by-day-month').value = '';
+                document.getElementById('by-month-field-container').style.display = 'none';
                 break;
             case 'month':
+                document.getElementById('by-month-field-container').style.display = 'block';
+
+
                 document.getElementById('by-day-field-container').style.display = 'none';
                 break;
             case 'year':
                 document.getElementById('by-day-field-container').style.display = 'none';
+                document.getElementById('by-month-field-container').style.display = 'none';
                 break;
             case 'custom':
                 document.getElementById('by-day-field-container').style.display = 'none';
+                document.getElementById('by-month-field-container').style.display = 'none';
                 break;
         }
     });
@@ -51,7 +57,7 @@ document.querySelector('#calculate-button')
 
         let formData = new FormData();
 
-        switch (getRadioButtonName()) {
+        switch (getRadioButtonName('calculation-type')) {
             case 'day':
                 formData = new FormData();
                 formData.append('by-day-day', document.getElementById('by-day-day').value);
@@ -60,7 +66,8 @@ document.querySelector('#calculate-button')
                 break;
             case 'month':
                 formData = new FormData();
-
+                formData.append('day-or-hour', getRadioButtonName('calculation-type-month'));
+                formData.append('by-month-month', document.getElementById('by-month-month').value);
                 sendRequest(formData, CALCULATE_BY_MONTH_ENDPOINT);
                 break;
             case 'year':
@@ -81,8 +88,8 @@ function wrapError(message) {
     errorMessage.style.display = 'block';
 }
 
-function getRadioButtonName() {
-    const radioButtons = document.getElementsByName('calculation-type');
+function getRadioButtonName(radioButtonName) {
+    const radioButtons = document.getElementsByName(radioButtonName);
     let selectedValue = '';
     for (const button of radioButtons) {
         if (button.checked) {
@@ -123,6 +130,6 @@ function sendRequest(formData, endpoint) {
             console.log(data)
         })
         .catch(error => {
-            wrapError('Некорпектный формат csv.');
+            wrapError('Некорректный формат csv.');
         });
 }

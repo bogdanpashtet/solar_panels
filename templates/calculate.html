@@ -2,12 +2,16 @@
 {% load static %}
 
 {% block styles %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href={% static "styles/index.css" %}>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 {% endblock %}
 
 {% block scripts %}
     <script type="text/javascript" src={% static "js/calculate.js" %}></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+            crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block content %}
@@ -49,11 +53,24 @@
                         </div>
                     </div>
                     <div class="form-group m-2">
-                        <input class="form-check-input" type="checkbox" id="calculate-max-angle"
-                               name="calculateMaxAngle">
-                        <label class="form-check-label" for="calculate-max-angle">
-                            Рассчитать максимальный угол
-                        </label>
+                        <div class="row m-2">
+                            <div class="col-4">
+                                <input class="form-check-input" type="checkbox" id="calculate-max-angle"
+                                       name="calculateMaxAngle">
+                                <label class="form-check-label" for="calculate-max-angle">
+                                    Рассчитать<br>
+                                    максимальный угол
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="tilt-angle">Угол наклона:</label>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" class="form-control" id="tilt-angle" name="tilt-angle">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div id="by-day-field-container">
                         <div class="row m-2">
@@ -73,27 +90,47 @@
                             </div>
                         </div>
                     </div>
+                    <div id="by-month-field-container" style="display: none">
+                        <div class="row m-2">
+                            <div class="form-group col-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="calculation-type-month"
+                                           id="calculation-month-day"
+                                           value="day" checked>
+                                    <label class="form-check-label" for="calculation-month-day">
+                                        Расчет по дням
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="calculation-type-month"
+                                           id="calculation-month-hour"
+                                           value="hour">
+                                    <label class="form-check-label" for="calculation-month-hour">
+                                        Расчет по часам
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="by-month-month">Номер месяца:</label>
+                                <input type="number" class="form-control" id="by-month-month" name="by-month-month">
+                            </div>
+                        </div>
+                    </div>
                     <div id="input-field-container">
                         <div class="row m-2">
-                            <div class="form-group col-3">
+                            <div class="form-group col-4">
                                 <label for="latitude">Широта:</label>
                             </div>
-                            <div class="form-group col-3">
+                            <div class="form-group col-4">
                                 <label for="azimuth">Азимут:</label>
-                            </div>
-                            <div class="form-group col-3">
-                                <label for="tilt-angle">Угол наклона:</label>
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="form-group col-3">
+                            <div class="form-group col-4">
                                 <input type="number" class="form-control" id="latitude" name="latitude">
                             </div>
-                            <div class="form-group col-3">
+                            <div class="form-group col-4">
                                 <input type="number" class="form-control" id="azimuth" name="azimuth">
-                            </div>
-                            <div class="form-group col-3">
-                                <input type="number" class="form-control" id="tilt-angle" name="tilt-angle">
                             </div>
                         </div>
                     </div>

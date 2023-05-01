@@ -141,27 +141,28 @@ def stations_direct_hourly_get_csv(request, **kwargs):
 @csrf_exempt
 @require_http_methods(["POST"])
 def calc_by_day(request):
-    for file in request.FILES.values():
-        try:
-            data = pd.read_csv(file, decimal=",", delimiter=';')
-        except Exception as e:
-            print("Ошибка при чтении csv файла: ", e)
-            return HttpResponseBadRequest('Invalid data')
-        if request.POST.get('max-angle') == 'false':
-            res = calc_day_by_hours(data,
-                                    int(request.POST.get('by-day-month')),
-                                    int(request.POST.get('by-day-day')),
-                                    int(request.POST.get('latitude')),
-                                    int(request.POST.get('tilt-angle')),
-                                    int(request.POST.get('azimuth')))
-        else:
-            res = max_tilt_angle(calc_day_by_hours,
-                                 data,
-                                 int(request.POST.get('by-day-month')),
-                                 int(request.POST.get('by-day-day')),
-                                 latitude=int(request.POST.get('latitude')),
-                                 azimuth=int(request.POST.get('azimuth')))
+    try:
+        data = pd.read_csv(get_file(request), decimal=",", delimiter=';')
+    except Exception as e:
+        print("Ошибка при чтении csv файла: ", e)
+        return HttpResponseBadRequest('Invalid data')
 
-        res_json = pd.Series(res).to_json(orient='values')
-        return JsonResponse(res_json, safe=False)
-    return HttpResponseBadRequest('Отсутвует файл')
+    res = ByDay(data, request).get_dataset()
+
+    res_json = pd.Series(res).to_json(orient='values')
+    return JsonResponse(res_json, safe=False)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def calc_by_month(request):
+    try:
+        data = pd.read_csv(get_file(request), decimal=",", delimiter=';')
+    except Exception as e:
+        print("Ошибка при чтении csv файла: ", e)
+        return HttpResponseBadRequest('Invalid data')
+
+    res = ByMonth(data, request).get_dataset()
+
+    res_json = pd.Series(res).to_json(orient='values')
+    return JsonResponse(res_json, safe=False)

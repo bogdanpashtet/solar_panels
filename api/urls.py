@@ -26,4 +26,7 @@ urlpatterns = [
 
     # расчет
     path('calc/by-day', calc_by_day),
+    path('calc/by-month', calc_by_month),
+    # path('calc/by-year', calc_by_year),
+    # path('calc/by-custom', calc_by_custom),
 ]
