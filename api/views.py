@@ -147,8 +147,7 @@ def calc_by_day(request):
         print("Ошибка при чтении csv файла: ", e)
         return HttpResponseBadRequest('Invalid data')
 
-    res = ByDay(data, request).get_dataset()
-
+    res = CalculateByDay(data, request).get_dataset()
     res_json = pd.Series(res).to_json(orient='values')
     return JsonResponse(res_json, safe=False)
 
@@ -162,7 +161,34 @@ def calc_by_month(request):
         print("Ошибка при чтении csv файла: ", e)
         return HttpResponseBadRequest('Invalid data')
 
-    res = ByMonth(data, request).get_dataset()
+    res = CalculateByMonth(data, request).get_dataset()
+    res_json = pd.Series(res).to_json(orient='values')
+    return JsonResponse(res_json, safe=False)
 
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def calc_by_year(request):
+    try:
+        data = pd.read_csv(get_file(request), decimal=",", delimiter=';')
+    except Exception as e:
+        print("Ошибка при чтении csv файла: ", e)
+        return HttpResponseBadRequest('Invalid data')
+
+    res = CalculateByYear(data, request).get_dataset()
+    res_json = pd.Series(res).to_json(orient='values')
+    return JsonResponse(res_json, safe=False)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def calc_by_custom(request):
+    try:
+        data = pd.read_csv(get_file(request), decimal=",", delimiter=';')
+    except Exception as e:
+        print("Ошибка при чтении csv файла: ", e)
+        return HttpResponseBadRequest('Invalid data')
+
+    res = CalculateByCustom(data, request).get_dataset()
     res_json = pd.Series(res).to_json(orient='values')
     return JsonResponse(res_json, safe=False)

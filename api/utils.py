@@ -1,5 +1,4 @@
-from numpy import array, sin, cos, tan, radians, degrees, sqrt, pi, arccos, arctan, fmax, fmin, sum, concatenate, \
-    asfarray
+from numpy import array, sin, cos, tan, radians, degrees, sqrt, pi, arccos, arctan, fmax, fmin, sum, concatenate, asfarray
 
 ghi = "GHI"
 dhi = "DHI"
@@ -7,11 +6,12 @@ albedo = "Albedo"
 doy = "DOY"
 
 
-class ByDay:
+class CalculateByBase:
+    class Meta:
+        abstract = True
+
     def __init__(self, data, request):
         self.data = data
-        self.month = int(request.POST.get('by-day-month'))
-        self.day = int(request.POST.get('by-day-day'))
         self.latitude = int(request.POST.get('latitude'))
         self.azimuth = int(request.POST.get('azimuth'))
         self.max_angle = request.POST.get('max-angle')
@@ -19,6 +19,39 @@ class ByDay:
             self.tilt_angle = 0
         else:
             self.tilt_angle = int(request.POST.get('tilt-angle'))
+
+    def max_tilt_angle(self, func):
+        latitude, self.latitude = self.latitude, 0
+        azimuth, self.azimuth = self.azimuth, 0
+        maximum = sum(func())
+        self.latitude = latitude
+        self.azimuth = azimuth
+        angle = 0
+        for i in range(1, 91):
+            self.tilt_angle = i
+            temp = sum(func())  # выход не сразу
+            if temp < maximum:
+                break
+            maximum = temp
+            angle = i
+        return angle, maximum
+
+    def calculate(self):
+        pass
+
+    def get_dataset(self):
+        if self.max_angle == 'false':
+            return self.calculate()
+        else:
+            return self.max_tilt_angle(self.calculate)
+
+
+class CalculateByDay(CalculateByBase):
+    def __init__(self, data, request):
+        super().__init__(data, request)
+        self.calculate_func = self.calc_day_by_hours
+        self.month = int(request.POST.get('by-day-month'))
+        self.day = int(request.POST.get('by-day-day'))
 
     def calc_day_by_hours(self):
         e_sum = array(self.data[(self.data.Month == self.month) & (self.data.Day == self.day)][ghi])
@@ -27,41 +60,15 @@ class ByDay:
         num_day_y = array(self.data[(self.data.Month == self.month) & (self.data.Day == self.day)][doy])
         return fun_calc_new(num_day_y, e_sum, e_dif, ro, self.latitude, self.tilt_angle, self.azimuth)
 
-    def by_day_max_tilt_angle(self):
-        latitude, self.latitude = self.latitude, 0
-        azimuth, self.azimuth = self.azimuth, 0
-        maximum = sum(self.calc_day_by_hours())
-        self.latitude = latitude
-        self.azimuth = azimuth
-        angle = 0
-        for i in range(1, 91):
-            self.tilt_angle = i
-            temp = sum(self.calc_day_by_hours())  # выход не сразу
-            if temp < maximum:
-                break
-            maximum = temp
-            angle = i
-        return angle, maximum
-
-    def get_dataset(self):
-        if self.max_angle == 'false':
-            return self.calc_day_by_hours()
-        else:
-            return self.by_day_max_tilt_angle()
+    def calculate(self):
+        return self.calc_day_by_hours()
 
 
-class ByMonth:
+class CalculateByMonth(CalculateByBase):
     def __init__(self, data, request):
-        self.data = data
-        self.day_or_hour = request.POST.get('day-or-hour')
+        super().__init__(data, request)
+        self.solve_radio = request.POST.get('solve-radio')
         self.month = int(request.POST.get('by-month-month'))
-        self.latitude = int(request.POST.get('latitude'))
-        self.azimuth = int(request.POST.get('azimuth'))
-        self.max_angle = request.POST.get('max-angle')
-        if request.POST.get('tilt-angle') is None:
-            self.tilt_angle = 0
-        else:
-            self.tilt_angle = int(request.POST.get('tilt-angle'))
 
     def calc_month_by_hours(self):
         e_sum = array(self.data[(self.data.Month == self.month)].GHI)
@@ -75,33 +82,67 @@ class ByMonth:
         month_by_day = sum(month_by_hours.reshape(self.data[(self.data.Month == self.month)].Day.max(), 24), axis=1)
         return month_by_day
 
-    def by_day_max_tilt_angle(self):
-        latitude, self.latitude = self.latitude, 0
-        azimuth, self.azimuth = self.azimuth, 0
-        maximum = sum(self.calculate())
-        self.latitude = latitude
-        self.azimuth = azimuth
-        angle = 0
-        for i in range(1, 91):
-            self.tilt_angle = i
-            temp = sum(self.calculate())  # выход не сразу
-            if temp < maximum:
-                break
-            maximum = temp
-            angle = i
-        return angle, maximum
-
     def calculate(self):
-        if self.day_or_hour == 'day':
+        if self.solve_radio == 'day':
             return self.calc_month_by_day()
         else:
             return self.calc_month_by_hours()
 
-    def get_dataset(self):
-        if self.max_angle == 'false':
-            return self.calculate()
+
+class CalculateByYear(CalculateByMonth):
+    def __init__(self, data, request):
+        super().__init__(data, request)
+
+    def calc_year_by_hours(self):
+        e_sum = array(self.data.GHI)
+        e_dif = array(self.data.DHI)
+        ro = array(self.data.Albedo)
+        num_day_y = array(self.data.DOY)
+        return fun_calc_new(num_day_y, e_sum, e_dif, ro, self.latitude, self.tilt_angle, self.azimuth)
+
+    def calc_year_by_day(self):
+        year_by_day = array([])
+        for num_month in range(1, 13):
+            self.month = num_month
+            year_by_day = concatenate((year_by_day, self.calc_month_by_day()))
+        return year_by_day
+
+    def calc_year_by_month(self):
+        year_by_month = []
+        for num_month in range(1, 13):
+            self.month = num_month
+            year_by_month.append(sum(self.calc_month_by_hours()))
+        return array(year_by_month)
+
+    def calculate(self):
+        if self.solve_radio == 'hour':
+            return self.calc_year_by_hours()
+        elif self.solve_radio == 'day':
+            return self.calc_year_by_day()
         else:
-            return self.by_day_max_tilt_angle()
+            return self.calc_year_by_month()
+
+
+class CalculateByCustom(CalculateByBase):
+    def __init__(self, data, request):
+        super().__init__(data, request)
+        self.num_month_start = int(request.POST.get('num-month-start'))
+        self.num_month_end = int(request.POST.get('num-month-end'))
+        self.num_day_m_start = int(request.POST.get('num-day-m-start'))
+        self.num_day_m_end = int(request.POST.get('num-day-m-end'))
+
+    def calc_by_range(self):
+        data = self.data[(self.data.Month >= self.num_month_start) & (self.data.Month <= self.num_month_end)]
+        data = data.drop(data[(data.Month == self.num_month_start) & (data.Day < self.num_day_m_start)].index)
+        data = data.drop(data[(data.Month == self.num_month_end) & (data.Day > self.num_day_m_end)].index)
+        e_sum = array(data.GHI)
+        e_dif = array(data.DHI)
+        ro = array(data.Albedo)
+        num_day_y = array(data.DOY)
+        return fun_calc_new(num_day_y, e_sum, e_dif, ro, self.latitude, self.tilt_angle, self.azimuth)
+
+    def calculate(self):
+        return self.calc_by_range()
 
 
 def write_data_hourly(writer, data):
@@ -192,81 +233,6 @@ def fun_calc_new(num_day_y, e_sum, e_dif, ro, latitude, tilt_angle, azimuth):  #
     r = r_pr + r_d + r_otr
 
     return r
-
-
-# 3 функции расчета дня(график есть), месяца(график 2 +-) и года по часам(слишком много точек)
-# def calc_day_by_hours(data, num_month, num_day_m, latitude=0, tilt_angle=0, azimuth=0, ghi="GHI",
-#                       dhi="DHI", albedo="Albedo", doy="DOY"):
-#     e_sum = array(data[(data.Month == num_month) & (data.Day == num_day_m)][ghi])
-#     e_dif = array(data[(data.Month == num_month) & (data.Day == num_day_m)][dhi])
-#     ro = array(data[(data.Month == num_month) & (data.Day == num_day_m)][albedo])
-#     num_day_y = array(data[(data.Month == num_month) & (data.Day == num_day_m)][doy])
-#     return fun_calc_new(num_day_y, e_sum, e_dif, ro, latitude, tilt_angle, azimuth)
-
-
-def calc_month_by_hours(data, num_month, latitude=0, tilt_angle=0, azimuth=0):
-    e_sum = array(data[(data.Month == num_month)].GHI)
-    e_dif = array(data[(data.Month == num_month)].DHI)
-    ro = array(data[(data.Month == num_month)].Albedo)
-    num_day_y = array(data[(data.Month == num_month)].DOY)
-    return fun_calc_new(num_day_y, e_sum, e_dif, ro, latitude, tilt_angle, azimuth)
-
-
-def calc_year_by_hours(data, latitude=0, tilt_angle=0, azimuth=0):
-    e_sum = array(data.GHI)
-    e_dif = array(data.DHI)
-    ro = array(data.Albedo)
-    num_day_y = array(data.DOY)
-    return fun_calc_new(num_day_y, e_sum, e_dif, ro, latitude, tilt_angle, azimuth)
-
-
-# Расчет месяца по дням(график есть)
-def calc_month_by_day(data, num_month, latitude=0, tilt_angle=0, azimuth=0):
-    month_by_hours = calc_month_by_hours(data, num_month, latitude, tilt_angle, azimuth)
-    month_by_day = sum(month_by_hours.reshape(data[(data.Month == num_month)].Day.max(), 24), axis=1)
-    return month_by_day
-
-
-# Расчет года по месяцам(график есть)
-def calc_year_by_month(data, latitude=0, tilt_angle=0, azimuth=0):
-    year_by_month = []
-    for num_month in range(1, 13):
-        year_by_month.append(sum(calc_month_by_hours(data, num_month, latitude, tilt_angle, azimuth)))
-    return array(year_by_month)
-
-
-# Расчет года по дням(график 2 +-)
-def calc_year_by_day(data, latitude=0, tilt_angle=0, azimuth=0):
-    year_by_day = array([])
-    for num_month in range(1, 13):
-        year_by_day = concatenate((year_by_day, calc_month_by_day(data, num_month, latitude, tilt_angle, azimuth)))
-    return year_by_day
-
-
-# расчет по замкнутому интервалу(если не задавать параметры, то расчет по году)
-def calc_by_range(data, num_month_start=1, num_day_m_start=1, num_month_end=12,
-                  num_day_m_end=31, latitude=0, tilt_angle=0, azimuth=0):
-    data = data[(data.Month >= num_month_start) & (data.Month <= num_month_end)]
-    data = data.drop(data[(data.Month == num_month_start) & (data.Day < num_day_m_start)].index)
-    data = data.drop(data[(data.Month == num_month_end) & (data.Day > num_day_m_end)].index)
-    e_sum = array(data.GHI)
-    e_dif = array(data.DHI)
-    ro = array(data.Albedo)
-    num_day_y = array(data.DOY)
-    return fun_calc_new(num_day_y, e_sum, e_dif, ro, latitude, tilt_angle, azimuth)
-
-
-# поиск угла при котором выработка максимальна (день, месяц, год или произвольный период)
-def max_tilt_angle(fun, *args, latitude, azimuth):
-    maximum = sum(fun(*args))
-    angle = 0
-    for i in range(1, 91):
-        temp = sum(fun(*args, tilt_angle=i, latitude=latitude, azimuth=azimuth))  # выход не сразу
-        if temp < maximum:
-            break
-        maximum = temp
-        angle = i
-    return angle, maximum
 
 
 def get_file(request):
