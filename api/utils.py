@@ -67,7 +67,7 @@ class CalculateByDay(CalculateByBase):
 class CalculateByMonth(CalculateByBase):
     def __init__(self, data, request):
         super().__init__(data, request)
-        self.solve_radio = request.POST.get('solve-radio')
+        self.solve_radio = request.POST.get('calculation-type-month')
         self.month = int(request.POST.get('by-month-month'))
 
     def calc_month_by_hours(self):
@@ -91,7 +91,9 @@ class CalculateByMonth(CalculateByBase):
 
 class CalculateByYear(CalculateByMonth):
     def __init__(self, data, request):
-        super().__init__(data, request)
+        CalculateByBase.__init__(self, data, request)
+        self.solve_radio = request.POST.get('calculation-type-year')
+        self.month = 0
 
     def calc_year_by_hours(self):
         e_sum = array(self.data.GHI)
