@@ -89,8 +89,6 @@ function sendRequest(formData, endpoint) {
     }
     formData.append('latitude', document.getElementById('latitude').value);
     formData.append('azimuth', document.getElementById('azimuth').value);
-    formData.append('by-day-day', document.getElementById('by-day-day').value);
-    formData.append('by-day-month', document.getElementById('by-day-month').value);
 
     fetch(url,
         {

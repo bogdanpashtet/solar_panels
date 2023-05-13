@@ -22,7 +22,6 @@
                 <h2 class="text-center">Выберите тип расчета:</h2>
                 <form enctype="multipart/form-data">
                     <div class="form-group">
-                        <input type="file" class="btn btn-secondary" id="load-csv-button"/>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="calculation-type" id="calculation-day"
                                    value="day" checked>
@@ -199,7 +198,7 @@
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary" id="calculate-button">Рассчитать</button>
-                    <button type="button" class="btn btn-success" id="downloadCsvBtn">Скачать CSV</button>
+                    <input type="file" class="btn btn-secondary" id="load-csv-button"/>
                 </form>
                 <div style="display: none" class="alert alert-danger" role="alert" id="error-message"></div>
             </div>

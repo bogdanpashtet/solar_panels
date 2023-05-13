@@ -21,7 +21,7 @@ def stations_info_get(request):
 
 
 @require_http_methods(["GET"])
-def stations_albedo_get(request, **kwargs):
+def station_albedo_get(request, **kwargs):
     data = list(Albedo.objects.filter(station_id=kwargs['id']).values())
     return JsonResponse(data, safe=False)
 

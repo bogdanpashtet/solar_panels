@@ -5,7 +5,7 @@ urlpatterns = [
     path('stations', stations_info_get),
     path('station/<int:id>/', station_info_get),
 
-    path('station/<int:id>/albedo', stations_albedo_get),
+    path('station/<int:id>/albedo', station_albedo_get),
 
     path('station/<int:id>/diffuse-daily', stations_diffuse_daily_get),
     path('station/<int:id>/diffuse-monthly', stations_diffuse_monthly_get),
