@@ -7,7 +7,7 @@ body {
 .map-container {
     float: left;
     overflow: hidden;
-    height: 100vh;
+    height: 90vh;
     width: 65%;
     margin: 0;
     padding: 0;
@@ -24,7 +24,7 @@ body {
     float: right;
     width: 35%;
     overflow-y: auto;
-    max-height: 700px;
+    max-height: 90vh;
 }
 
 ul {
