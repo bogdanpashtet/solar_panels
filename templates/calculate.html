@@ -17,32 +17,32 @@
     {% csrf_token %}
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-6 mx-auto">
                 <h2 class="text-center">Выберите тип расчета:</h2>
                 <form enctype="multipart/form-data">
-                    <div class="form-group">
-                        <div class="form-check">
+                    <div class="form-group mb-5">
+                        <div class="form-check mx-4">
                             <input class="form-check-input" type="radio" name="calculation-type" id="calculation-day"
                                    value="day" checked>
                             <label class="form-check-label" for="calculation-day">
                                 Расчет дня
                             </label>
                         </div>
-                        <div class="form-check">
+                        <div class="form-check mx-4">
                             <input class="form-check-input" type="radio" name="calculation-type" id="calculation-month"
                                    value="month">
                             <label class="form-check-label" for="calculation-month">
                                 Расчет месяца
                             </label>
                         </div>
-                        <div class="form-check">
+                        <div class="form-check mx-4">
                             <input class="form-check-input" type="radio" name="calculation-type" id="calculation-year"
                                    value="year">
                             <label class="form-check-label" for="calculation-year">
                                 Расчет года
                             </label>
                         </div>
-                        <div class="form-check">
+                        <div class="form-check mx-4">
                             <input class="form-check-input" type="radio" name="calculation-type" id="calculation-custom"
                                    value="custom">
                             <label class="form-check-label" for="calculation-custom">
@@ -51,8 +51,8 @@
                         </div>
                     </div>
                     <div class="form-group m-2">
-                        <div class="row m-2">
-                            <div class="col-4">
+                        <div class="row m-1">
+                            <div class="col-6">
                                 <input class="form-check-input" type="checkbox" id="calculate-max-angle"
                                        name="calculateMaxAngle">
                                 <label class="form-check-label" for="calculate-max-angle">
@@ -60,7 +60,7 @@
                                     максимальный угол
                                 </label>
                             </div>
-                            <div class="col-4">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label for="tilt-angle">Угол наклона:</label>
                                 </div>
@@ -72,25 +72,25 @@
                     </div>
                     <div id="by-day">
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <label for="by-day-day">Номер дня:</label>
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <label for="by-day-month">Номер месяца:</label>
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <input type="number" class="form-control" id="by-day-day" name="by-day-day">
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <input type="number" class="form-control" id="by-day-month" name="by-day-month">
                             </div>
                         </div>
                     </div>
                     <div id="by-month" style="display: none">
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="calculation-type-month"
                                            id="calculation-month-day"
@@ -108,7 +108,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <label for="by-month-month">Номер месяца:</label>
                                 <input type="number" class="form-control" id="by-month-month" name="by-month-month">
                             </div>
@@ -116,7 +116,7 @@
                     </div>
                     <div id="by-year" style="display: none">
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="calculation-type-year"
                                            id="calculation-year-day"
@@ -146,60 +146,66 @@
                     </div>
                     <div id="by-custom" style="display: none">
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <label for="num-day-m-start">Номер первого дня:</label>
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <label for="num-day-m-end">Номер последнего дня:</label>
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <input type="number" class="form-control" id="num-day-m-start" name="num-day-m-start">
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <input type="number" class="form-control" id="num-day-m-end" name="num-day-m-end">
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <label for="num-month-start">Номер первого месяца:</label>
                             </div>
-                            <div class="form-group col-4">
-                                <label for="num-month-end">Номер посдеднего месяца:</label>
+                            <div class="form-group col-6">
+                                <label for="num-month-end">Номер последнего месяца:</label>
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <input type="number" class="form-control" id="num-month-start" name="num-month-start">
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <input type="number" class="form-control" id="num-month-end" name="num-month-end">
                             </div>
                         </div>
                     </div>
                     <div id="input-field-container">
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <label for="latitude">Широта:</label>
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <label for="azimuth">Азимут:</label>
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <input type="number" class="form-control" id="latitude" name="latitude">
                             </div>
-                            <div class="form-group col-4">
+                            <div class="form-group col-6">
                                 <input type="number" class="form-control" id="azimuth" name="azimuth">
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" id="calculate-button">Рассчитать</button>
-                    <input type="file" class="btn btn-secondary" id="load-csv-button"/>
+                    <div class="d-flex justify-content-between mx-3">
+                        <div class="float-start">
+                            <button type="button" class="btn btn-primary" id="calculate-button">Рассчитать</button>
+                        </div>
+                        <div class="float-end col-6">
+                            <input type="file" class="btn btn-secondary" id="load-csv-button"/>
+                        </div>
+                    </div>
                 </form>
-                <div style="display: none" class="alert alert-danger" role="alert" id="error-message"></div>
+                <div style="display: none" class="alert alert-danger mx-3 mt-3" role="alert" id="error-message"></div>
             </div>
         </div>
     </div>

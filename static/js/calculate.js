@@ -46,11 +46,10 @@ document.querySelectorAll('input[name="calculation-type"]').forEach(radio => {
 // Обработка нажатия на кнопку "Рассчитать"
 document.querySelector('#calculate-button')
     .addEventListener('click', () => {
-        if (!file) {
-            wrapError('Файл не выбран.');
-            return;
-        } else if (file.type !== "text/csv") {
-            wrapError('Невенрный формат файла: выберете ".csv".');
+
+        let err = validateFields()
+        if (err !== "") {
+            wrapError(err)
             return;
         } else {
             errorMessage.style.display = STYLE_NONE;
@@ -126,7 +125,7 @@ function sendRequest(formData, endpoint) {
             a.remove();
         })
         .catch(error => {
-            wrapError('Ошибка при получении данных.' + error);
+            wrapError('Формат csv некорректен.');
         });
 }
 
@@ -165,4 +164,73 @@ function switchButtonDo(radioButtonName, ...funcs) {
             funcs[3]()
             break;
     }
+}
+
+function validateFields() {
+    let validationError = "";
+    if (!file) {
+        validationError += 'Файл не выбран.\n';
+    } else if (file.type !== "text/csv") {
+        validationError += 'Невенрный формат файла: выберете ".csv".\n';
+    }
+
+    let tiltAngleField = document.getElementById('tilt-angle').value;
+    if (tiltAngleField === "" || tiltAngleField < 0 || tiltAngleField > 90) {
+        validationError += "Значение угла наклона должно лежать в пределах от 0 до 90.\n";
+    }
+
+    let latitudeField = document.getElementById('latitude').value;
+    if (latitudeField === "" || latitudeField < 0 || latitudeField > 90) {
+        validationError += "Значение широты должно лежать в пределах от 0 до 90.\n";
+    }
+
+    let azimuthField = document.getElementById('azimuth').value;
+    if (azimuthField === "" || azimuthField < 0 || azimuthField > 360) {
+        validationError += "Значение азимута должно лежать в пределах от 0 до 360.\n";
+    }
+
+    switchButtonDo('calculation-type',
+        () => {
+            let dayDayField = document.getElementById('by-day-day').value;
+            if (dayDayField === "" || dayDayField < 1 || dayDayField > 31) {
+                validationError += "Значение дня должно лежать в пределах от 1 до 31.\n";
+            }
+
+            let dayMonthField = document.getElementById('by-day-month').value;
+            if (dayMonthField === "" || dayMonthField < 1 || dayMonthField > 12) {
+                validationError += "Значение месяца должно лежать в пределах от 1 до 12.\n";
+            }
+        },
+        () => {
+            let monthMonthField = document.getElementById('by-month-month').value;
+            if (monthMonthField === "" || monthMonthField < 1 || monthMonthField > 12) {
+                validationError += "Значение месяца должно лежать в пределах от 1 до 12.\n";
+            }
+        },
+        () => {
+
+        }, () => {
+            let numMonthStart = document.getElementById('num-month-start').value;
+            if (numMonthStart === "" || numMonthStart < 1 || numMonthStart > 12) {
+                validationError += "Значение месяца начала периода должно лежать в пределах от 1 до 12.\n";
+            }
+
+            let numMonthEnd = document.getElementById('num-month-end').value;
+            if (numMonthEnd === "" || numMonthEnd < 1 || numMonthEnd > 12) {
+                validationError += "Значение месяца конца периода должно лежать в пределах от 1 до 12.\n";
+            }
+
+            let numDayStart = document.getElementById('num-day-m-start').value;
+            if (numDayStart === "" || numDayStart < 1 || numDayStart > 31) {
+                validationError += "Значение дня начала периода должно лежать в пределах от 1 до 31.\n";
+            }
+
+            let numDayEnd = document.getElementById('num-day-m-start').value;
+            if (numDayEnd === "" || numDayEnd < 1 || numDayEnd > 31) {
+                validationError += "Значение дня конца периода должно лежать в пределах от 1 до 31.\n";
+            }
+        }
+    )
+
+    return validationError
 }
