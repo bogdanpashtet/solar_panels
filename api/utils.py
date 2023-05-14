@@ -1,3 +1,7 @@
+import csv
+import datetime
+from calendar import monthrange
+from django.http import HttpResponse
 from numpy import array, sin, cos, tan, radians, degrees, sqrt, pi, arccos, arctan, fmax, fmin, sum, concatenate, asfarray
 
 ghi = "GHI"
@@ -116,11 +120,25 @@ class CalculateByBase:
 
         return r
 
+    def write_data_csv(self):
+        pass
+
+    def write_data_header(self, func, name):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + name + str(
+            datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")) + '.csv"'
+        data = func
+        writer = csv.writer(response)
+        return data, writer, response
+
     def get_dataset(self):
         if self.max_angle == 'false':
-            return self.calculate()
+            return self.write_data_csv()
         else:
-            return self.max_tilt_angle(self.calculate)
+            data, writer, response = self.write_data_header(self.max_tilt_angle(self.calculate), "max_tilt_angle")
+            writer.writerow(["angle", "maximum"])
+            writer.writerow([data[0], data[1]])
+            return response
 
 
 class CalculateByDay(CalculateByBase):
@@ -138,6 +156,18 @@ class CalculateByDay(CalculateByBase):
 
     def calculate(self):
         return self.calc_day_by_hours()
+
+    def write_data_csv(self):
+        data, writer, response = self.write_data_header(self.calc_day_by_hours(), "calc_day_by_hours")
+        self.write_data_by_hour(writer, data)
+        return response
+
+    def write_data_by_hour(self, writer, data):
+        writer.writerow(['month', 'day', 'hour', 'result'])
+        hour = 1
+        for i in data:
+            writer.writerow([self.month, self.day, hour, i])
+            hour += 1
 
 
 class CalculateByMonth(CalculateByBase):
@@ -163,6 +193,32 @@ class CalculateByMonth(CalculateByBase):
             return self.calc_month_by_day()
         else:
             return self.calc_month_by_hours()
+
+    def write_data_csv(self):
+        data, writer, response = self.write_data_header(self.calculate(), "calc_month_by_" + self.solve_radio)
+        if self.solve_radio == 'day':
+            self.write_data_by_day(writer, data)
+        else:
+            self.write_data_by_hour(writer, data)
+        return response
+
+    def write_data_by_hour(self, writer, data):
+        writer.writerow(['month', 'day', 'hour', 'result'])
+        hour = 1
+        day = 1
+        for i in data:
+            if hour > 24:
+                hour = 1
+                day += 1
+            writer.writerow([self.month, day, hour, i])
+            hour += 1
+
+    def write_data_by_day(self, writer, data):
+        writer.writerow(['month', 'day', 'result'])
+        day = 1
+        for i in data:
+            writer.writerow([self.month, day, i])
+            day += 1
 
 
 class CalculateByYear(CalculateByMonth):
@@ -200,6 +256,54 @@ class CalculateByYear(CalculateByMonth):
         else:
             return self.calc_year_by_month()
 
+    def write_data_csv(self):
+        data, writer, response = self.write_data_header(self.calculate(), "calc_year_by_" + self.solve_radio)
+        if self.solve_radio == 'hour':
+            self.write_data_by_hour(writer, data)
+        elif self.solve_radio == 'day':
+            self.write_data_by_day(writer, data)
+        else:
+            self.write_data_by_month(writer, data)
+        return response
+
+    def write_data_by_hour(self, writer, data):
+        writer.writerow(['month', 'day', 'hour', 'result'])
+        hour = 1
+        day = 1
+        month = 1
+        num_days = monthrange(2023, month)[1]
+        for i in data:
+            if hour > 24:
+                hour = 1
+                day += 1
+            if day > num_days:
+                day = 1
+                month += 1
+                num_days = monthrange(2023, month)[1]
+            writer.writerow([month, day, hour, i])
+            hour += 1
+
+    def write_data_by_day(self, writer, data):
+        writer.writerow(['month', 'day', 'result'])
+        day = 1
+        month = 1
+        print(monthrange(2023, month))
+        num_days = monthrange(2023, month)[1]
+        for i in data:
+            if day > num_days:
+                day = 1
+                month += 1
+                num_days = monthrange(2023, month)[1]
+            writer.writerow([month, day, i])
+            day += 1
+
+    def write_data_by_month(self, writer, data):
+        writer.writerow(['month', 'result'])
+        month = 1
+        for i in data:
+            writer.writerow([month,  i])
+            month += 1
+
 
 class CalculateByCustom(CalculateByBase):
     def __init__(self, data, request):
@@ -221,6 +325,28 @@ class CalculateByCustom(CalculateByBase):
 
     def calculate(self):
         return self.calc_by_range()
+
+    def write_data_csv(self):
+        data, writer, response = self.write_data_header(self.calculate(), "calc_by_custom_")
+        self.write_data_by_hour(writer, data)
+        return response
+
+    def write_data_by_hour(self, writer, data):
+        writer.writerow(['month', 'day', 'hour', 'result'])
+        hour = 1
+        day = self.num_day_m_start
+        month = self.num_month_start
+        num_days = monthrange(2023, month)[1]
+        for i in data:
+            if hour > 24:
+                hour = 1
+                day += 1
+            if day > num_days:
+                day = 1
+                month += 1
+                num_days = monthrange(2023, month)[1]
+            writer.writerow([month, day, hour, i])
+            hour += 1
 
 
 def write_data_hourly(writer, data):

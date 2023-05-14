@@ -140,55 +140,47 @@ def stations_direct_hourly_get_csv(request, **kwargs):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def calc_by_day(request):
+def calc_by_day_csv(request):
     try:
         data = pd.read_csv(get_file(request), decimal=",", delimiter=';')
     except Exception as e:
         print("Ошибка при чтении csv файла: ", e)
         return HttpResponseBadRequest('Invalid data')
 
-    res = CalculateByDay(data, request).get_dataset()
-    res_json = pd.Series(res).to_json(orient='values')
-    return JsonResponse(res_json, safe=False)
+    return CalculateByDay(data, request).get_dataset()
 
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def calc_by_month(request):
+def calc_by_month_csv(request):
     try:
         data = pd.read_csv(get_file(request), decimal=",", delimiter=';')
     except Exception as e:
         print("Ошибка при чтении csv файла: ", e)
         return HttpResponseBadRequest('Invalid data')
 
-    res = CalculateByMonth(data, request).get_dataset()
-    res_json = pd.Series(res).to_json(orient='values')
-    return JsonResponse(res_json, safe=False)
+    return CalculateByMonth(data, request).get_dataset()
 
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def calc_by_year(request):
+def calc_by_year_csv(request):
     try:
         data = pd.read_csv(get_file(request), decimal=",", delimiter=';')
     except Exception as e:
         print("Ошибка при чтении csv файла: ", e)
         return HttpResponseBadRequest('Invalid data')
 
-    res = CalculateByYear(data, request).get_dataset()
-    res_json = pd.Series(res).to_json(orient='values')
-    return JsonResponse(res_json, safe=False)
+    return CalculateByYear(data, request).get_dataset()
 
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def calc_by_custom(request):
+def calc_by_custom_csv(request):
     try:
         data = pd.read_csv(get_file(request), decimal=",", delimiter=';')
     except Exception as e:
         print("Ошибка при чтении csv файла: ", e)
         return HttpResponseBadRequest('Invalid data')
 
-    res = CalculateByCustom(data, request).get_dataset()
-    res_json = pd.Series(res).to_json(orient='values')
-    return JsonResponse(res_json, safe=False)
+    return CalculateByCustom(data, request).get_dataset()

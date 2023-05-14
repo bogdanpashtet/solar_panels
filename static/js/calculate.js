@@ -27,10 +27,18 @@ document.getElementById('load-csv-button')
 document.querySelectorAll('input[name="calculation-type"]').forEach(radio => {
     radio.addEventListener('change', () => {
         switchButtonDo('calculation-type',
-            () => {blockStyle(STYLE_BLOCK, STYLE_NONE, STYLE_NONE, STYLE_NONE)},
-            () => {blockStyle(STYLE_NONE, STYLE_BLOCK, STYLE_NONE, STYLE_NONE)},
-            () => {blockStyle(STYLE_NONE, STYLE_NONE, STYLE_BLOCK, STYLE_NONE)},
-            () => {blockStyle(STYLE_NONE, STYLE_NONE, STYLE_NONE, STYLE_BLOCK)}
+            () => {
+                blockStyle(STYLE_BLOCK, STYLE_NONE, STYLE_NONE, STYLE_NONE)
+            },
+            () => {
+                blockStyle(STYLE_NONE, STYLE_BLOCK, STYLE_NONE, STYLE_NONE)
+            },
+            () => {
+                blockStyle(STYLE_NONE, STYLE_NONE, STYLE_BLOCK, STYLE_NONE)
+            },
+            () => {
+                blockStyle(STYLE_NONE, STYLE_NONE, STYLE_NONE, STYLE_BLOCK)
+            }
         );
     });
 });
@@ -49,10 +57,18 @@ document.querySelector('#calculate-button')
         }
 
         switchButtonDo('calculation-type',
-            () => {createRequest(CALCULATE_TYPE_BY_DAY, 'by-day-day', 'by-day-month')},
-            () => {createRequest(CALCULATE_TYPE_BY_MONTH, 'calculation-type-month', 'by-month-month')},
-            () => {createRequest(CALCULATE_TYPE_BY_YEAR, 'calculation-type-year')},
-            () => {createRequest(CALCULATE_TYPE_BY_CUSTOM, 'num-month-start', 'num-month-end', 'num-day-m-start', 'num-day-m-end')}
+            () => {
+                createRequest(CALCULATE_TYPE_BY_DAY, 'by-day-day', 'by-day-month')
+            },
+            () => {
+                createRequest(CALCULATE_TYPE_BY_MONTH, 'calculation-type-month', 'by-month-month')
+            },
+            () => {
+                createRequest(CALCULATE_TYPE_BY_YEAR, 'calculation-type-year')
+            },
+            () => {
+                createRequest(CALCULATE_TYPE_BY_CUSTOM, 'num-month-start', 'num-month-end', 'num-day-m-start', 'num-day-m-end')
+            }
         );
     });
 
@@ -78,7 +94,7 @@ function getMaxAngleState() {
 }
 
 function sendRequest(formData, endpoint) {
-    let url = window.location.origin + API_V1_PREFIX + window.location.pathname + endpoint;
+    let url = window.location.origin + API_V1_PREFIX + window.location.pathname + endpoint + '/csv';
 
     formData.append('file', file);
     if (getMaxAngleState() === false) {
@@ -96,12 +112,21 @@ function sendRequest(formData, endpoint) {
             body: formData
         }
     )
-        .then(response => response.json())
+        .then(response => {
+            const filename = response.headers.get('Content-Disposition').split('filename=')[1].replace(/"/g, '');
+            return response.blob().then(blob => ({filename, blob}));
+        })
         .then(data => {
-            console.log(data)
+            const url = window.URL.createObjectURL(data.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = data.filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
         })
         .catch(error => {
-            wrapError('Некорректный формат csv.');
+            wrapError('Ошибка при получении данных.' + error);
         });
 }
 
