@@ -1,5 +1,5 @@
 from django.urls import path
-from api.views import *
+from insolation_for_horizontal_panels.views import *
 
 urlpatterns = [
     path('stations', stations_info_get),
@@ -23,11 +23,4 @@ urlpatterns = [
     path('station/<int:id>/diffuse-hourly/csv', stations_diffuse_hourly_get_csv),
     path('station/<int:id>/total-hourly/csv', stations_total_hourly_get_csv),
     path('station/<int:id>/direct-hourly/csv', stations_direct_hourly_get_csv),
-
-    # расчет
-
-    path('calc/by-day/csv', calc_by_day_csv),
-    path('calc/by-month/csv', calc_by_month_csv),
-    path('calc/by-year/csv', calc_by_year_csv),
-    path('calc/by-custom/csv', calc_by_custom_csv),
 ]

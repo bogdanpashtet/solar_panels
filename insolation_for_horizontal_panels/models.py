@@ -86,3 +86,4 @@ class DirectHourlySolarRadiation(BaseHour):
 
 class TotalHourlySolarRadiation(BaseHour):
     pass
+

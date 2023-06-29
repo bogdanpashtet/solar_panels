@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView
-from main.models import *
+from insolation_for_horizontal_panels.models import *
 
 
 def index(request):
@@ -10,7 +10,6 @@ def index(request):
 class StationInfo(ListView):
     model = Stations
     template_name = 'stations_info.html'
-    extra_context = {'title': '?????????'}
 
 
 def calculate(request):
