@@ -1,4 +1,4 @@
-const API_V1_PREFIX = '/insolation_for_horizontal_panels/v1'
+const API_V1_PREFIX = '/api/v1'
 
 const svg = d3.select('svg')
     .style('transition', 'transform 0.3s ease-in-out');

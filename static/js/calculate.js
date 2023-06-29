@@ -1,4 +1,4 @@
-const API_V1_PREFIX = '/insolation_for_horizontal_panels/v1';
+const API_V1_PREFIX = '/api/v1';
 
 const CALCULATE_TYPE_BY_DAY = 'by-day';
 const CALCULATE_TYPE_BY_MONTH = 'by-month';
