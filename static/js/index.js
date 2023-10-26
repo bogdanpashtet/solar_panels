@@ -44,7 +44,7 @@ d3.json('static/json/ussr.json')
 svg.call(zoom);
 
 function createPoints() {
-    let url = window.location.origin + API_V1_PREFIX + '/stations';
+    let url = window.location.origin + API_V1_PREFIX + '/station';
 
     fetch(url)
         .then(response => response.json())

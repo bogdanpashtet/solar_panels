@@ -2,7 +2,7 @@ from django.urls import path
 from insolation_for_horizontal_panels.views import *
 
 urlpatterns = [
-    path('stations', stations_info_get),
+    path('station', stations_info_get),
     path('station/<int:id>/', station_info_get),
 
     path('station/<int:id>/albedo', station_albedo_get),
